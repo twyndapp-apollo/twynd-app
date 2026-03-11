@@ -1,8 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Twynd App - Prisma Schema
 
 generator client {
   provider = "prisma-client"
@@ -12,4 +8,244 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ============ USER & AUTH ============
+
+enum AuthProvider {
+  EMAIL
+  GOOGLE
+  FACEBOOK
+  TIKTOK
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+model User {
+  id                    String    @id @default(cuid())
+  email                 String    @unique
+  authProvider          AuthProvider
+  authProviderId        String?   @unique
+  
+  // Profile Info
+  nickname              String?
+  avatar                String?   // URL to avatar image
+  birthDate             DateTime?
+  zodiacSign            String?
+  age                   Int?
+  language              String?   @default("en")
+  country               String?
+  description           String?
+  
+  // Privacy Settings
+  showAge               Boolean   @default(true)
+  showZodiac            Boolean   @default(true)
+  showBirthday          Boolean   @default(false)
+  showLocation          Boolean   @default(true)
+  
+  // Room & Connection
+  currentRoom           Room?     @relation("UserRoom", fields: [currentRoomId], references: [id], onDelete: SetNull)
+  currentRoomId         String?   @unique
+  connectionPartner     User?     @relation("UserConnections", fields: [connectionPartnerId], references: [id], onDelete: SetNull)
+  connectionPartnerId   String?   @unique
+  partnerConnection     User?     @relation("UserConnections")
+  
+  isRoomLead            Boolean   @default(false)
+  
+  // Room Membership
+  roomMemberships       RoomMember[]
+  
+  // Chat
+  sentMessages          Message[] @relation("SenderMessages")
+  
+  // Subscription
+  subscription          Subscription?
+  
+  // Tracking
+  lastActiveAt          DateTime  @default(now())
+  statusEmoji           String?   @default("😊")
+  statusMessage         String?   @db.VarChar(50)
+  
+  // Timestamps
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@index([email])
+  @@index([currentRoomId])
+  @@index([connectionPartnerId])
+}
+
+// ============ ROOMS ============
+
+enum RoomStatus {
+  WAITING_FOR_PARTNER
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+model Room {
+  id                    String    @id @default(cuid())
+  code                  String    @unique  // Link/code for joining
+  qrCodeUrl             String?   // URL to QR code image
+  
+  status                RoomStatus @default(WAITING_FOR_PARTNER)
+  
+  lead                  User?     @relation("UserRoom")
+  members               RoomMember[]
+  milestones            Milestone[]
+  
+  chatSessions          ChatSession[]
+  
+  // Tracking
+  createdAt             DateTime  @default(now())
+  roomStartedAt         DateTime? // When both users connected
+  updatedAt             DateTime  @updatedAt
+  
+  @@index([code])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum RoomMemberRole {
+  LEAD
+  FOLLOWER
+}
+
+model RoomMember {
+  id                    String    @id @default(cuid())
+  room                  Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                String
+  role                  RoomMemberRole
+  
+  joinedAt              DateTime  @default(now())
+  
+  @@unique([roomId, userId])
+  @@index([roomId])
+  @@index([userId])
+}
+
+model RoomAccess {
+  id                    String    @id @default(cuid())
+  code                  String    @unique  // QR code / link
+  createdAt             DateTime  @default(now())
+  expiresAt             DateTime?
+  usedAt                DateTime?
+  usedByUserId          String?
+  
+  @@index([code])
+}
+
+// ============ CHAT & MESSAGING ============
+
+model ChatSession {
+  id                    String    @id @default(cuid())
+  room                  Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId                String
+  
+  gameType              String?   // e.g., "love_map_builder", "this_or_that"
+  title                 String    @default("Chat")
+  
+  messages              Message[]
+  
+  // Game Results
+  results               Json?     // Flexible JSON for game results
+  
+  lastMessageAt         DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@index([roomId])
+  @@index([lastMessageAt])
+}
+
+model Message {
+  id                    String    @id @default(cuid())
+  chatSession           ChatSession @relation(fields: [chatSessionId], references: [id], onDelete: Cascade)
+  chatSessionId         String
+  
+  sender                User      @relation("SenderMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId              String
+  
+  content               String    @db.Text
+  contentType           String    @default("text") // "text", "reaction", "game_result"
+  
+  isRead                Boolean   @default(false)
+  readAt                DateTime?
+  
+  reactions             Message[] @relation("MessageReactions")
+  reactionTo            Message?  @relation("MessageReactions", fields: [reactionToId], references: [id], onDelete: SetNull)
+  reactionToId          String?
+  
+  createdAt             DateTime  @default(now())
+  
+  @@index([chatSessionId])
+  @@index([senderId])
+  @@index([createdAt])
+}
+
+// ============ SUBSCRIPTION & BILLING ============
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+model Subscription {
+  id                    String    @id @default(cuid())
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                String    @unique
+  
+  status                SubscriptionStatus @default(ACTIVE)
+  startDate             DateTime
+  endDate               DateTime
+  
+  // Free trial info
+  isTrialPeriod         Boolean   @default(true)
+  trialStartDate        DateTime?
+  trialEndDate          DateTime?
+  
+  // Referrals
+  referralCode          String    @unique @default(cuid())
+  referralCount         Int       @default(0)
+  referralExtensionDays Int       @default(0) // Additional days from referrals
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@index([userId])
+}
+
+// ============ MILESTONES ============
+
+enum MilestoneType {
+  DAYS_7
+  DAYS_30
+  FEEL_GOOD_COUPLE
+  RECONCILED_COUPLE
+  CUSTOM
+}
+
+model Milestone {
+  id                    String    @id @default(cuid())
+  room                  Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId                String
+  
+  type                  MilestoneType
+  milestoneTitle        String
+  description           String?
+  
+  aiGeneratedPoem       String?
+  
+  awardedAt             DateTime  @default(now())
+  
+  @@index([roomId])
 }

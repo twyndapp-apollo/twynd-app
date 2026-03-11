@@ -1,6 +1,14 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@twynd/shared": ["../../packages/shared/src/index.ts"],
+      "@twynd/shared/constants": ["../../packages/shared/src/constants.ts"],
+      "@twynd/shared/types": ["../../packages/shared/src/types.ts"],
+      "@twynd/shared/utils": ["../../packages/shared/src/utils.ts"],
+      "@twynd/shared/api": ["../../packages/shared/src/api.ts"]
+    }
   }
 }
