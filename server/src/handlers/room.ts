@@ -1,6 +1,18 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import { prisma, ApiError, generateRoomCode, generateQRCodeUrl } from '../utils/helpers';
-import { RoomStatus, RoomMemberRole } from '@prisma/client';
+
+// Define enums locally to match Prisma schema
+enum RoomStatus {
+  WAITING_FOR_PARTNER = 'WAITING_FOR_PARTNER',
+  ACTIVE = 'ACTIVE',
+  COMPLETED = 'COMPLETED',
+  ARCHIVED = 'ARCHIVED',
+}
+
+enum RoomMemberRole {
+  LEAD = 'LEAD',
+  FOLLOWER = 'FOLLOWER',
+}
 
 export async function handleCreateRoom(
   request: FastifyRequest,
@@ -34,7 +46,7 @@ export async function handleCreateRoom(
     }
 
     // Generate room code
-    let code: string;
+    let code: string = '';
     let codeExists = true;
     while (codeExists) {
       code = generateRoomCode();

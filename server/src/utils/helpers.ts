@@ -1,4 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+// Use require to import from the generated Prisma client with the correct runtime path
+// From dist/src/utils/ -> ../../ goes to dist/ -> generated/prisma/client
+const { PrismaClient } = require('../../generated/prisma/client');
 
 export const prisma = new PrismaClient({
   errorFormat: 'pretty',
@@ -9,7 +11,7 @@ prisma.$connect()
   .then(() => {
     console.log('✅ Database connected successfully');
   })
-  .catch((err) => {
+  .catch((err: Error) => {
     console.error('❌ Database connection failed:', err.message);
     console.error('Make sure PostgreSQL is running and DATABASE_URL is correct');
     process.exit(1);

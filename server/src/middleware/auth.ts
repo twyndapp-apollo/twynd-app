@@ -1,11 +1,9 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import * as jwt from 'jsonwebtoken';
 
-declare global {
-  namespace FastifyInstance {
-    interface FastifyRequest {
-      userId?: string;
-    }
+declare module 'fastify' {
+  interface FastifyRequest {
+    userId?: string;
   }
 }
 

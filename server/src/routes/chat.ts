@@ -1,6 +1,24 @@
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { authenticateToken } from '../middleware/auth';
 import { ApiError, prisma } from '../utils/helpers';
+
+interface CreateChatSessionBody {
+  roomId: string;
+  gameType?: string;
+}
+
+interface SendMessageBody {
+  content: string;
+  contentType: string;
+}
+
+interface ChatSessionIdParams {
+  chatSessionId: string;
+}
+
+interface MessageIdParams {
+  messageId: string;
+}
 
 export async function registerChatRoutes(app: FastifyInstance) {
   // Get chat sessions
@@ -32,15 +50,12 @@ export async function registerChatRoutes(app: FastifyInstance) {
   );
 
   // Create chat session
-  app.post(
+  app.post<{ Body: CreateChatSessionBody }>(
     '/chat/sessions',
     { preHandler: authenticateToken },
-    async (request, reply) => {
+    async (request: FastifyRequest<{ Body: CreateChatSessionBody }>, reply) => {
       try {
-        const { roomId, gameType } = request.body as {
-          roomId: string;
-          gameType?: string;
-        };
+        const { roomId, gameType } = request.body;
 
         if (!roomId) {
           throw new ApiError(400, 'roomId is required');
@@ -66,12 +81,12 @@ export async function registerChatRoutes(app: FastifyInstance) {
   );
 
   // Get messages
-  app.get(
+  app.get<{ Params: ChatSessionIdParams }>(
     '/chat/sessions/:chatSessionId/messages',
     { preHandler: authenticateToken },
-    async (request, reply) => {
+    async (request: FastifyRequest<{ Params: ChatSessionIdParams }>, reply) => {
       try {
-        const { chatSessionId } = request.params as { chatSessionId: string };
+        const { chatSessionId } = request.params;
         const { limit = '50' } = request.query as { limit: string };
 
         const messages = await prisma.message.findMany({
@@ -92,16 +107,13 @@ export async function registerChatRoutes(app: FastifyInstance) {
   );
 
   // Send message
-  app.post(
+  app.post<{ Params: ChatSessionIdParams; Body: SendMessageBody }>(
     '/chat/sessions/:chatSessionId/messages',
     { preHandler: authenticateToken },
-    async (request, reply) => {
+    async (request: FastifyRequest<{ Params: ChatSessionIdParams; Body: SendMessageBody }>, reply) => {
       try {
-        const { chatSessionId } = request.params as { chatSessionId: string };
-        const { content, contentType = 'text' } = request.body as {
-          content: string;
-          contentType: string;
-        };
+        const { chatSessionId } = request.params;
+        const { content, contentType = 'text' } = request.body;
 
         if (!request.userId) {
           throw new ApiError(401, 'Unauthorized');
@@ -134,12 +146,12 @@ export async function registerChatRoutes(app: FastifyInstance) {
   );
 
   // Mark as read
-  app.patch(
+  app.patch<{ Params: MessageIdParams }>(
     '/chat/messages/:messageId/read',
     { preHandler: authenticateToken },
-    async (request, reply) => {
+    async (request: FastifyRequest<{ Params: MessageIdParams }>, reply) => {
       try {
-        const { messageId } = request.params as { messageId: string };
+        const { messageId } = request.params;
 
         const message = await prisma.message.update({
           where: { id: messageId },

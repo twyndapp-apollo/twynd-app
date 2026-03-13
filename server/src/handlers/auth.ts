@@ -2,6 +2,14 @@ import type { FastifyRequest, FastifyReply } from 'fastify';
 import { prisma, ApiError, validateEmail } from '../utils/helpers';
 import { generateToken } from '../middleware/auth';
 
+// Define AuthProvider enum locally to match Prisma schema
+enum AuthProvider {
+  EMAIL = 'EMAIL',
+  GOOGLE = 'GOOGLE',
+  FACEBOOK = 'FACEBOOK',
+  TIKTOK = 'TIKTOK',
+}
+
 interface SignUpBody {
   email: string;
   authProvider: string;
@@ -23,6 +31,21 @@ export async function handleSignUp(
       throw new ApiError(400, 'Invalid email');
     }
 
+    // Normalize and validate authProvider - default to EMAIL if not provided
+    let normalizedProvider: string = (authProvider || 'EMAIL').toUpperCase().trim();
+    
+    // Map common provider names to enum values
+    const providerMap: { [key: string]: string } = {
+      'EMAIL': 'EMAIL',
+      'GOOGLE': 'GOOGLE',
+      'FACEBOOK': 'FACEBOOK',
+      'TIKTOK': 'TIKTOK',
+    };
+
+    if (!providerMap[normalizedProvider]) {
+      normalizedProvider = 'EMAIL'; // Default to EMAIL for unknown providers
+    }
+
     // Check if user already exists
     let user = await prisma.user.findUnique({ where: { email } });
 
@@ -31,7 +54,7 @@ export async function handleSignUp(
       user = await prisma.user.create({
         data: {
           email,
-          authProvider,
+          authProvider: normalizedProvider as AuthProvider,
           authProviderId: authProviderId || undefined,
           language: 'en',
         },

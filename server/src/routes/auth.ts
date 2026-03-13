@@ -1,15 +1,25 @@
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { authenticateToken } from '../middleware/auth';
 import { handleSignUp, handleSignIn, handleVerifyToken } from '../handlers/auth';
 
+interface SignUpBody {
+  email: string;
+  authProvider: string;
+  authProviderId?: string;
+}
+
+interface SignInBody {
+  email: string;
+}
+
 export async function registerAuthRoutes(app: FastifyInstance) {
   // Sign up
-  app.post('/auth/signup', async (request, reply) => {
+  app.post<{ Body: SignUpBody }>('/auth/signup', async (request: FastifyRequest<{ Body: SignUpBody }>, reply) => {
     return handleSignUp(request, reply);
   });
 
   // Sign in
-  app.post('/auth/signin', async (request, reply) => {
+  app.post<{ Body: SignInBody }>('/auth/signin', async (request: FastifyRequest<{ Body: SignInBody }>, reply) => {
     return handleSignIn(request, reply);
   });
 

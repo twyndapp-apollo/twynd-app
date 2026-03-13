@@ -1,4 +1,5 @@
 // server/src/index.ts
+import 'dotenv/config';
 import Fastify from 'fastify';
 import fastifyWebSocket from '@fastify/websocket';
 import fastifyCors from '@fastify/cors';
@@ -30,12 +31,14 @@ async function main() {
     app.get('/health', async () => ({ status: 'ok', timestamp: Date.now() }));
 
     console.log('🛣️ Registering routes');
-    // Register routes
-    await registerAuthRoutes(app);
-    await registerUserRoutes(app);
-    await registerRoomRoutes(app);
-    await registerChatRoutes(app);
-    await registerGameRoutes(app);
+    // Register routes with /api prefix
+    await app.register(async (app) => {
+      await registerAuthRoutes(app);
+      await registerUserRoutes(app);
+      await registerRoomRoutes(app);
+      await registerChatRoutes(app);
+      await registerGameRoutes(app);
+    }, { prefix: '/api' });
 
     // WebSocket endpoint for real-time messages
     app.get('/ws', { websocket: true }, (socket) => {
