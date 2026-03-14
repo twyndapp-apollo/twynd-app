@@ -32,7 +32,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import { REACTION_LIST, VALIDATION_RULES } from '@twynd/shared/constants';
+import { REACTION_LIST, VALIDATION_RULES, REACTIONS } from '@twynd/shared/constants';
 import type {
   LocalChatMessage,
   LocalChatSession,
@@ -105,7 +105,7 @@ export const ChatSessionScreen: React.FC<ChatSessionScreenProps> = ({
           timestamp,
           isRead: true,
         };
-        await addMessage(incoming);
+        await addMessage(incoming, myId);
         setMessages((prev) => [...prev, incoming]);
       }
 
@@ -152,7 +152,7 @@ export const ChatSessionScreen: React.FC<ChatSessionScreenProps> = ({
       isRead: true,
     };
     await upsertChatSession({ ...sess, gameState: 'completed' });
-    await addMessage(resultMsg);
+    await addMessage(resultMsg, myId);
     setMessages((prev) => {
       const already = prev.find((m) => m.id === resultMsg.id);
       return already ? prev : [...prev, resultMsg];
@@ -222,7 +222,7 @@ export const ChatSessionScreen: React.FC<ChatSessionScreenProps> = ({
         lastMessagePreview: `🎮 ${score}% match!`,
       };
       await upsertChatSession(completed);
-      await addMessage(resultMsg);
+      await addMessage(resultMsg, myId);
       setSession(completed);
       setMessages((prev) => [...prev, resultMsg]);
 
@@ -249,7 +249,7 @@ export const ChatSessionScreen: React.FC<ChatSessionScreenProps> = ({
       timestamp: new Date().toISOString(),
       isRead: true,
     };
-    await addMessage(msg);
+    await addMessage(msg, myId);
     setMessages((prev) => [...prev, msg]);
     setInputText('');
 
@@ -362,6 +362,43 @@ export const ChatSessionScreen: React.FC<ChatSessionScreenProps> = ({
           }
         />
 
+        {/* Quick-reaction bar */}
+        <View style={styles.quickReactionBar}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickReactionScroll}>
+            {Object.values(REACTIONS).map((emoji) => (
+              <TouchableOpacity
+                key={emoji}
+                style={styles.quickReactionBtn}
+                onPress={() => {
+                  const msg: LocalChatMessage = {
+                    id: `msg_${Date.now()}`,
+                    sessionId,
+                    senderId: myId,
+                    text: emoji,
+                    contentType: 'text',
+                    timestamp: new Date().toISOString(),
+                    isRead: true,
+                  };
+                  addMessage(msg, myId).then(() => {
+                    setMessages((prev) => [...prev, msg]);
+                    partnerSync.sendRaw('chat_message', {
+                      targetSessionId: sessionId,
+                      text: emoji,
+                      contentType: 'text',
+                      messageId: msg.id,
+                      timestamp: msg.timestamp,
+                    });
+                    setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 80);
+                  });
+                }}
+              >
+                <Text style={styles.quickReactionEmoji}>{emoji}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Text input */}
         <View style={styles.inputRow}>
           <TextInput
             style={styles.input}
@@ -382,7 +419,9 @@ export const ChatSessionScreen: React.FC<ChatSessionScreenProps> = ({
             <Text style={styles.sendBtnText}>↑</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.charHint}>{inputText.length}/{VALIDATION_RULES.CHAT_MESSAGE_MAX_LENGTH}</Text>
+        <Text style={[styles.charHint, styles.charHintBottom]}>
+          {inputText.length}/{VALIDATION_RULES.CHAT_MESSAGE_MAX_LENGTH}
+        </Text>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -635,11 +674,25 @@ const styles = StyleSheet.create({
   timeRight: { textAlign: 'right' },
   timeLeft: { textAlign: 'left' },
 
+  // Quick-reaction bar
+  quickReactionBar: {
+    borderTopWidth: 1, borderTopColor: '#f0f0f0',
+    paddingVertical: 6, backgroundColor: '#fff',
+  },
+  quickReactionScroll: {
+    paddingHorizontal: 12, gap: 6,
+  },
+  quickReactionBtn: {
+    width: 38, height: 38, borderRadius: 19,
+    backgroundColor: '#f5f5f5', alignItems: 'center', justifyContent: 'center',
+  },
+  quickReactionEmoji: { fontSize: 20 },
+
   // Input
   inputRow: {
     flexDirection: 'row', alignItems: 'flex-end',
-    paddingHorizontal: 12, paddingTop: 8, paddingBottom: 4,
-    borderTopWidth: 1, borderTopColor: '#f0f0f0', gap: 8,
+    paddingHorizontal: 12, paddingTop: 6, paddingBottom: 4,
+    gap: 8,
   },
   input: {
     flex: 1, backgroundColor: '#f5f5f5', borderRadius: 20,
@@ -652,7 +705,10 @@ const styles = StyleSheet.create({
   },
   sendBtnDisabled: { backgroundColor: '#ccc' },
   sendBtnText: { fontSize: 20, color: '#fff', fontWeight: '700', lineHeight: 22 },
-  charHint: { fontSize: 10, color: '#ccc', textAlign: 'right', paddingRight: 14, paddingBottom: 6 },
+  charHint: { fontSize: 10, color: '#ccc', textAlign: 'right', paddingRight: 14 },
+  charHintBottom: {
+    paddingBottom: Platform.OS === 'android' ? 20 : 28,
+  },
 
   // Game result card
   resultCard: {

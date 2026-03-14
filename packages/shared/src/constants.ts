@@ -128,6 +128,7 @@ export const REACTIONS = {
   ANGRY: '😠',
   DISGUSTED: '🤢',
   SCARED: '😨',
+  TIRED: '😩',
   APATHETIC: '😑',
 } as const;
 

@@ -11,6 +11,7 @@ import {
   Modal,
 } from 'react-native';
 import { useUser } from '../context/UserContext';
+import { saveMyProfile } from '../services/localProfile';
 import { isValidNickname, calculateAge, getZodiacSign } from '@twynd/shared/utils';
 import { VALIDATION_RULES, AVATAR_OPTIONS, LANGUAGES, COUNTRIES } from '@twynd/shared/constants';
 
@@ -63,10 +64,15 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
         zodiacSign = getZodiacSign(birthDate);
       }
 
+      // Only avatar + nickname are stored on the server
       await updateProfile({
-        avatar: selectedAvatar,
+        avatar: selectedAvatar!,
         nickname: nickname.trim(),
-        birthDate,
+      });
+
+      // Personal data stays on-device only
+      await saveMyProfile({
+        birthDate: birthDate?.toISOString(),
         age,
         zodiacSign,
         language,

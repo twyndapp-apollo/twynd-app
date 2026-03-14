@@ -11,7 +11,8 @@ import {
 import { useUser } from '../context/UserContext';
 import { MilestoneBadgeModal } from '../components/MilestoneBadgeModal';
 import { EXTERNAL_LINKS, MILESTONES } from '@twynd/shared/constants';
-import type { VibesDashboard, Milestone, AIInsight } from '@twynd/shared/types';
+import { getLastAnalysis } from '../services/onDeviceAI';
+import type { VibesDashboard, Milestone, AIInsight, DailyAIAnalysis } from '@twynd/shared/types';
 
 interface VibesScreenProps {
   onBack: () => void;
@@ -85,6 +86,7 @@ const metricStyles = StyleSheet.create({
 export const VibesScreen: React.FC<VibesScreenProps> = ({ onBack, onOpenChat }) => {
   const { session, currentRoomId } = useUser();
   const [dashboard, setDashboard] = useState<VibesDashboard | null>(null);
+  const [localAnalysis, setLocalAnalysis] = useState<DailyAIAnalysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedMilestone, setSelectedMilestone] = useState<Milestone | null>(null);
@@ -95,15 +97,21 @@ export const VibesScreen: React.FC<VibesScreenProps> = ({ onBack, onOpenChat }) 
   const fetchDashboard = useCallback(async () => {
     if (!currentRoomId || !session) return;
     try {
-      const res = await fetch(`${apiUrl}/vibes/${currentRoomId}`, {
-        headers: { Authorization: `Bearer ${session.token}` },
-      });
+      const [res, analysis] = await Promise.all([
+        fetch(`${apiUrl}/vibes/${currentRoomId}`, {
+          headers: { Authorization: `Bearer ${session.token}` },
+        }),
+        getLastAnalysis(),
+      ]);
       if (res.ok) {
         const data: VibesDashboard = await res.json();
         setDashboard(data);
       }
+      setLocalAnalysis(analysis);
     } catch {
       // fail silently — show empty state
+      const analysis = await getLastAnalysis().catch(() => null);
+      setLocalAnalysis(analysis);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -203,8 +211,8 @@ export const VibesScreen: React.FC<VibesScreenProps> = ({ onBack, onOpenChat }) 
   };
 
   const renderInsightsSection = () => {
-    const insight = dashboard?.latestInsight;
-    if (!insight) {
+    // Prefer on-device AI analysis over server insight
+    if (!localAnalysis && !dashboard?.latestInsight) {
       return (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>AI Insights</Text>
@@ -219,16 +227,27 @@ export const VibesScreen: React.FC<VibesScreenProps> = ({ onBack, onOpenChat }) 
       );
     }
 
-    const relMetrics = insight.relationshipMetrics as Record<string, number>;
-    const intMetrics = insight.interestMetrics as Record<string, number>;
-    const sparkMetrics = insight.sparkMetrics as Record<string, number>;
+    // Build metric records from local analysis (scores only) or fall back to server
+    const serverInsight = dashboard?.latestInsight;
+    const relMetrics: Record<string, number> = localAnalysis
+      ? Object.fromEntries(Object.entries(localAnalysis.relationship).map(([k, v]) => [k, v.score]))
+      : (serverInsight?.relationshipMetrics as Record<string, number>);
+    const intMetrics: Record<string, number> = localAnalysis
+      ? Object.fromEntries(Object.entries(localAnalysis.interest).map(([k, v]) => [k, v.score]))
+      : (serverInsight?.interestMetrics as Record<string, number>);
+    const sparkMetrics: Record<string, number> = localAnalysis
+      ? Object.fromEntries(Object.entries(localAnalysis.spark).map(([k, v]) => [k, v.score]))
+      : (serverInsight?.sparkMetrics as Record<string, number>);
+    const generatedAt = localAnalysis?.generatedAt ?? serverInsight?.generatedAt;
 
     return (
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>AI Insights</Text>
-        <Text style={styles.insightDate}>
-          Last updated {new Date(insight.generatedAt).toLocaleDateString()}
-        </Text>
+        {generatedAt && (
+          <Text style={styles.insightDate}>
+            Last updated {new Date(generatedAt).toLocaleDateString()}
+          </Text>
+        )}
 
         <View style={styles.insightGroup}>
           <Text style={styles.insightGroupTitle}>Relationship</Text>

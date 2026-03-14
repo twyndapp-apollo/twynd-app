@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import * as ScreenCapture from 'expo-screen-capture';
 import { useUser } from '../context/UserContext';
-import { GAME_CONFIG, REACTIONS } from '@twynd/shared/constants';
 import { VibesScreen } from './VibesScreen';
 import { UsScreen } from './UsScreen';
 import { SettingsScreen } from './SettingsScreen';
@@ -135,7 +134,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ initialView }) => {
   if (activeView === 'games') {
     return (
       <GamesGalleryScreen
-        onSelectGame={(gameId) => { openGame(gameId); setActiveView('chat'); }}
+        onSelectGame={(gameId) => openGame(gameId)}
         onBack={() => setActiveView('home')}
       />
     );

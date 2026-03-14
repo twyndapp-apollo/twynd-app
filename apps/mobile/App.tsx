@@ -7,15 +7,25 @@ import { ProfileSetupScreen } from './src/screens/ProfileSetupScreen';
 import { RoomSelectionScreen } from './src/screens/RoomSelectionScreen';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { pushWidgetData, parseDeepLink } from './src/utils/widget';
+import { initDailyAnalysis } from './src/services/onDeviceAI';
 
 function AppContent() {
-  const { isAuthenticated, isProfileComplete, currentRoomId, session } = useUser();
+  const { isAuthenticated, isProfileComplete, currentRoomId, session, user } = useUser();
   const [initialDeepLink, setInitialDeepLink] = useState<string | null>(null);
+  const aiInitRef = useRef(false);
 
   // Push latest partner data to widget shared container whenever session is active
   useEffect(() => {
     if (session?.token) pushWidgetData();
   }, [session?.token]);
+
+  // Start daily on-device AI analysis (lead only, once per session)
+  useEffect(() => {
+    if (isAuthenticated && user && !aiInitRef.current) {
+      aiInitRef.current = true;
+      initDailyAnalysis(user.isRoomLead);
+    }
+  }, [isAuthenticated, user]);
 
   // Handle deep links (widget tap → twynd://us)
   useEffect(() => {

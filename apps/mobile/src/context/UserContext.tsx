@@ -188,6 +188,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           STORAGE_KEYS.USER_TOKEN,
           STORAGE_KEYS.USER_DATA,
           STORAGE_KEYS.ROOM_CODE,
+          STORAGE_KEYS.AI_ANALYSIS,
+          STORAGE_KEYS.AI_ANALYSIS_DATE,
         ]),
         clearAllChatData(),
         clearLocalProfileData(),

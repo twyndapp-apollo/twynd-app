@@ -59,7 +59,7 @@ export async function getMessages(sessionId: string): Promise<LocalChatMessage[]
   return JSON.parse(raw) as LocalChatMessage[];
 }
 
-export async function addMessage(message: LocalChatMessage): Promise<void> {
+export async function addMessage(message: LocalChatMessage, myUserId?: string): Promise<void> {
   const messages = await getMessages(message.sessionId);
   messages.push(message);
   await AsyncStorage.setItem(
@@ -70,7 +70,10 @@ export async function addMessage(message: LocalChatMessage): Promise<void> {
   // Update the session's lastMessageAt, preview, and unread count
   const session = await getChatSession(message.sessionId);
   if (session) {
-    const isMine = message.senderId === 'me';  // caller sets 'me' for own messages
+    // isMine = true → don't increment unread; false → partner message, increment
+    const isMine = myUserId
+      ? message.senderId === myUserId || message.senderId === 'system'
+      : true; // safe default: don't increment if caller didn't provide userId
     await upsertChatSession({
       ...session,
       lastMessageAt: message.timestamp,
