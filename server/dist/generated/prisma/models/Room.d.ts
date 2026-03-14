@@ -159,6 +159,7 @@ export type RoomWhereInput = {
     members?: Prisma.RoomMemberListRelationFilter;
     milestones?: Prisma.MilestoneListRelationFilter;
     chatSessions?: Prisma.ChatSessionListRelationFilter;
+    insights?: Prisma.AIInsightListRelationFilter;
 };
 export type RoomOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -172,6 +173,7 @@ export type RoomOrderByWithRelationInput = {
     members?: Prisma.RoomMemberOrderByRelationAggregateInput;
     milestones?: Prisma.MilestoneOrderByRelationAggregateInput;
     chatSessions?: Prisma.ChatSessionOrderByRelationAggregateInput;
+    insights?: Prisma.AIInsightOrderByRelationAggregateInput;
 };
 export type RoomWhereUniqueInput = Prisma.AtLeast<{
     id?: string;
@@ -188,6 +190,7 @@ export type RoomWhereUniqueInput = Prisma.AtLeast<{
     members?: Prisma.RoomMemberListRelationFilter;
     milestones?: Prisma.MilestoneListRelationFilter;
     chatSessions?: Prisma.ChatSessionListRelationFilter;
+    insights?: Prisma.AIInsightListRelationFilter;
 }, "id" | "code">;
 export type RoomOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
@@ -225,6 +228,7 @@ export type RoomCreateInput = {
     members?: Prisma.RoomMemberCreateNestedManyWithoutRoomInput;
     milestones?: Prisma.MilestoneCreateNestedManyWithoutRoomInput;
     chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutRoomInput;
+    insights?: Prisma.AIInsightCreateNestedManyWithoutRoomInput;
 };
 export type RoomUncheckedCreateInput = {
     id?: string;
@@ -238,6 +242,7 @@ export type RoomUncheckedCreateInput = {
     members?: Prisma.RoomMemberUncheckedCreateNestedManyWithoutRoomInput;
     milestones?: Prisma.MilestoneUncheckedCreateNestedManyWithoutRoomInput;
     chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutRoomInput;
+    insights?: Prisma.AIInsightUncheckedCreateNestedManyWithoutRoomInput;
 };
 export type RoomUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -251,6 +256,7 @@ export type RoomUpdateInput = {
     members?: Prisma.RoomMemberUpdateManyWithoutRoomNestedInput;
     milestones?: Prisma.MilestoneUpdateManyWithoutRoomNestedInput;
     chatSessions?: Prisma.ChatSessionUpdateManyWithoutRoomNestedInput;
+    insights?: Prisma.AIInsightUpdateManyWithoutRoomNestedInput;
 };
 export type RoomUncheckedUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -264,6 +270,7 @@ export type RoomUncheckedUpdateInput = {
     members?: Prisma.RoomMemberUncheckedUpdateManyWithoutRoomNestedInput;
     milestones?: Prisma.MilestoneUncheckedUpdateManyWithoutRoomNestedInput;
     chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutRoomNestedInput;
+    insights?: Prisma.AIInsightUncheckedUpdateManyWithoutRoomNestedInput;
 };
 export type RoomCreateManyInput = {
     id?: string;
@@ -344,6 +351,9 @@ export type RoomUpdateOneWithoutLeadNestedInput = {
 export type EnumRoomStatusFieldUpdateOperationsInput = {
     set?: $Enums.RoomStatus;
 };
+export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null;
+};
 export type RoomCreateNestedOneWithoutMembersInput = {
     create?: Prisma.XOR<Prisma.RoomCreateWithoutMembersInput, Prisma.RoomUncheckedCreateWithoutMembersInput>;
     connectOrCreate?: Prisma.RoomCreateOrConnectWithoutMembersInput;
@@ -380,6 +390,18 @@ export type RoomUpdateOneRequiredWithoutMilestonesNestedInput = {
     connect?: Prisma.RoomWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.RoomUpdateToOneWithWhereWithoutMilestonesInput, Prisma.RoomUpdateWithoutMilestonesInput>, Prisma.RoomUncheckedUpdateWithoutMilestonesInput>;
 };
+export type RoomCreateNestedOneWithoutInsightsInput = {
+    create?: Prisma.XOR<Prisma.RoomCreateWithoutInsightsInput, Prisma.RoomUncheckedCreateWithoutInsightsInput>;
+    connectOrCreate?: Prisma.RoomCreateOrConnectWithoutInsightsInput;
+    connect?: Prisma.RoomWhereUniqueInput;
+};
+export type RoomUpdateOneRequiredWithoutInsightsNestedInput = {
+    create?: Prisma.XOR<Prisma.RoomCreateWithoutInsightsInput, Prisma.RoomUncheckedCreateWithoutInsightsInput>;
+    connectOrCreate?: Prisma.RoomCreateOrConnectWithoutInsightsInput;
+    upsert?: Prisma.RoomUpsertWithoutInsightsInput;
+    connect?: Prisma.RoomWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.RoomUpdateToOneWithWhereWithoutInsightsInput, Prisma.RoomUpdateWithoutInsightsInput>, Prisma.RoomUncheckedUpdateWithoutInsightsInput>;
+};
 export type RoomCreateWithoutLeadInput = {
     id?: string;
     code: string;
@@ -391,6 +413,7 @@ export type RoomCreateWithoutLeadInput = {
     members?: Prisma.RoomMemberCreateNestedManyWithoutRoomInput;
     milestones?: Prisma.MilestoneCreateNestedManyWithoutRoomInput;
     chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutRoomInput;
+    insights?: Prisma.AIInsightCreateNestedManyWithoutRoomInput;
 };
 export type RoomUncheckedCreateWithoutLeadInput = {
     id?: string;
@@ -403,6 +426,7 @@ export type RoomUncheckedCreateWithoutLeadInput = {
     members?: Prisma.RoomMemberUncheckedCreateNestedManyWithoutRoomInput;
     milestones?: Prisma.MilestoneUncheckedCreateNestedManyWithoutRoomInput;
     chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutRoomInput;
+    insights?: Prisma.AIInsightUncheckedCreateNestedManyWithoutRoomInput;
 };
 export type RoomCreateOrConnectWithoutLeadInput = {
     where: Prisma.RoomWhereUniqueInput;
@@ -428,6 +452,7 @@ export type RoomUpdateWithoutLeadInput = {
     members?: Prisma.RoomMemberUpdateManyWithoutRoomNestedInput;
     milestones?: Prisma.MilestoneUpdateManyWithoutRoomNestedInput;
     chatSessions?: Prisma.ChatSessionUpdateManyWithoutRoomNestedInput;
+    insights?: Prisma.AIInsightUpdateManyWithoutRoomNestedInput;
 };
 export type RoomUncheckedUpdateWithoutLeadInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -440,6 +465,7 @@ export type RoomUncheckedUpdateWithoutLeadInput = {
     members?: Prisma.RoomMemberUncheckedUpdateManyWithoutRoomNestedInput;
     milestones?: Prisma.MilestoneUncheckedUpdateManyWithoutRoomNestedInput;
     chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutRoomNestedInput;
+    insights?: Prisma.AIInsightUncheckedUpdateManyWithoutRoomNestedInput;
 };
 export type RoomCreateWithoutMembersInput = {
     id?: string;
@@ -452,6 +478,7 @@ export type RoomCreateWithoutMembersInput = {
     lead?: Prisma.UserCreateNestedOneWithoutCurrentRoomInput;
     milestones?: Prisma.MilestoneCreateNestedManyWithoutRoomInput;
     chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutRoomInput;
+    insights?: Prisma.AIInsightCreateNestedManyWithoutRoomInput;
 };
 export type RoomUncheckedCreateWithoutMembersInput = {
     id?: string;
@@ -464,6 +491,7 @@ export type RoomUncheckedCreateWithoutMembersInput = {
     lead?: Prisma.UserUncheckedCreateNestedOneWithoutCurrentRoomInput;
     milestones?: Prisma.MilestoneUncheckedCreateNestedManyWithoutRoomInput;
     chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutRoomInput;
+    insights?: Prisma.AIInsightUncheckedCreateNestedManyWithoutRoomInput;
 };
 export type RoomCreateOrConnectWithoutMembersInput = {
     where: Prisma.RoomWhereUniqueInput;
@@ -489,6 +517,7 @@ export type RoomUpdateWithoutMembersInput = {
     lead?: Prisma.UserUpdateOneWithoutCurrentRoomNestedInput;
     milestones?: Prisma.MilestoneUpdateManyWithoutRoomNestedInput;
     chatSessions?: Prisma.ChatSessionUpdateManyWithoutRoomNestedInput;
+    insights?: Prisma.AIInsightUpdateManyWithoutRoomNestedInput;
 };
 export type RoomUncheckedUpdateWithoutMembersInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -501,6 +530,7 @@ export type RoomUncheckedUpdateWithoutMembersInput = {
     lead?: Prisma.UserUncheckedUpdateOneWithoutCurrentRoomNestedInput;
     milestones?: Prisma.MilestoneUncheckedUpdateManyWithoutRoomNestedInput;
     chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutRoomNestedInput;
+    insights?: Prisma.AIInsightUncheckedUpdateManyWithoutRoomNestedInput;
 };
 export type RoomCreateWithoutChatSessionsInput = {
     id?: string;
@@ -513,6 +543,7 @@ export type RoomCreateWithoutChatSessionsInput = {
     lead?: Prisma.UserCreateNestedOneWithoutCurrentRoomInput;
     members?: Prisma.RoomMemberCreateNestedManyWithoutRoomInput;
     milestones?: Prisma.MilestoneCreateNestedManyWithoutRoomInput;
+    insights?: Prisma.AIInsightCreateNestedManyWithoutRoomInput;
 };
 export type RoomUncheckedCreateWithoutChatSessionsInput = {
     id?: string;
@@ -525,6 +556,7 @@ export type RoomUncheckedCreateWithoutChatSessionsInput = {
     lead?: Prisma.UserUncheckedCreateNestedOneWithoutCurrentRoomInput;
     members?: Prisma.RoomMemberUncheckedCreateNestedManyWithoutRoomInput;
     milestones?: Prisma.MilestoneUncheckedCreateNestedManyWithoutRoomInput;
+    insights?: Prisma.AIInsightUncheckedCreateNestedManyWithoutRoomInput;
 };
 export type RoomCreateOrConnectWithoutChatSessionsInput = {
     where: Prisma.RoomWhereUniqueInput;
@@ -550,6 +582,7 @@ export type RoomUpdateWithoutChatSessionsInput = {
     lead?: Prisma.UserUpdateOneWithoutCurrentRoomNestedInput;
     members?: Prisma.RoomMemberUpdateManyWithoutRoomNestedInput;
     milestones?: Prisma.MilestoneUpdateManyWithoutRoomNestedInput;
+    insights?: Prisma.AIInsightUpdateManyWithoutRoomNestedInput;
 };
 export type RoomUncheckedUpdateWithoutChatSessionsInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -562,6 +595,7 @@ export type RoomUncheckedUpdateWithoutChatSessionsInput = {
     lead?: Prisma.UserUncheckedUpdateOneWithoutCurrentRoomNestedInput;
     members?: Prisma.RoomMemberUncheckedUpdateManyWithoutRoomNestedInput;
     milestones?: Prisma.MilestoneUncheckedUpdateManyWithoutRoomNestedInput;
+    insights?: Prisma.AIInsightUncheckedUpdateManyWithoutRoomNestedInput;
 };
 export type RoomCreateWithoutMilestonesInput = {
     id?: string;
@@ -574,6 +608,7 @@ export type RoomCreateWithoutMilestonesInput = {
     lead?: Prisma.UserCreateNestedOneWithoutCurrentRoomInput;
     members?: Prisma.RoomMemberCreateNestedManyWithoutRoomInput;
     chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutRoomInput;
+    insights?: Prisma.AIInsightCreateNestedManyWithoutRoomInput;
 };
 export type RoomUncheckedCreateWithoutMilestonesInput = {
     id?: string;
@@ -586,6 +621,7 @@ export type RoomUncheckedCreateWithoutMilestonesInput = {
     lead?: Prisma.UserUncheckedCreateNestedOneWithoutCurrentRoomInput;
     members?: Prisma.RoomMemberUncheckedCreateNestedManyWithoutRoomInput;
     chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutRoomInput;
+    insights?: Prisma.AIInsightUncheckedCreateNestedManyWithoutRoomInput;
 };
 export type RoomCreateOrConnectWithoutMilestonesInput = {
     where: Prisma.RoomWhereUniqueInput;
@@ -611,6 +647,7 @@ export type RoomUpdateWithoutMilestonesInput = {
     lead?: Prisma.UserUpdateOneWithoutCurrentRoomNestedInput;
     members?: Prisma.RoomMemberUpdateManyWithoutRoomNestedInput;
     chatSessions?: Prisma.ChatSessionUpdateManyWithoutRoomNestedInput;
+    insights?: Prisma.AIInsightUpdateManyWithoutRoomNestedInput;
 };
 export type RoomUncheckedUpdateWithoutMilestonesInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -623,6 +660,72 @@ export type RoomUncheckedUpdateWithoutMilestonesInput = {
     lead?: Prisma.UserUncheckedUpdateOneWithoutCurrentRoomNestedInput;
     members?: Prisma.RoomMemberUncheckedUpdateManyWithoutRoomNestedInput;
     chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutRoomNestedInput;
+    insights?: Prisma.AIInsightUncheckedUpdateManyWithoutRoomNestedInput;
+};
+export type RoomCreateWithoutInsightsInput = {
+    id?: string;
+    code: string;
+    qrCodeUrl?: string | null;
+    status?: $Enums.RoomStatus;
+    createdAt?: Date | string;
+    roomStartedAt?: Date | string | null;
+    updatedAt?: Date | string;
+    lead?: Prisma.UserCreateNestedOneWithoutCurrentRoomInput;
+    members?: Prisma.RoomMemberCreateNestedManyWithoutRoomInput;
+    milestones?: Prisma.MilestoneCreateNestedManyWithoutRoomInput;
+    chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutRoomInput;
+};
+export type RoomUncheckedCreateWithoutInsightsInput = {
+    id?: string;
+    code: string;
+    qrCodeUrl?: string | null;
+    status?: $Enums.RoomStatus;
+    createdAt?: Date | string;
+    roomStartedAt?: Date | string | null;
+    updatedAt?: Date | string;
+    lead?: Prisma.UserUncheckedCreateNestedOneWithoutCurrentRoomInput;
+    members?: Prisma.RoomMemberUncheckedCreateNestedManyWithoutRoomInput;
+    milestones?: Prisma.MilestoneUncheckedCreateNestedManyWithoutRoomInput;
+    chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutRoomInput;
+};
+export type RoomCreateOrConnectWithoutInsightsInput = {
+    where: Prisma.RoomWhereUniqueInput;
+    create: Prisma.XOR<Prisma.RoomCreateWithoutInsightsInput, Prisma.RoomUncheckedCreateWithoutInsightsInput>;
+};
+export type RoomUpsertWithoutInsightsInput = {
+    update: Prisma.XOR<Prisma.RoomUpdateWithoutInsightsInput, Prisma.RoomUncheckedUpdateWithoutInsightsInput>;
+    create: Prisma.XOR<Prisma.RoomCreateWithoutInsightsInput, Prisma.RoomUncheckedCreateWithoutInsightsInput>;
+    where?: Prisma.RoomWhereInput;
+};
+export type RoomUpdateToOneWithWhereWithoutInsightsInput = {
+    where?: Prisma.RoomWhereInput;
+    data: Prisma.XOR<Prisma.RoomUpdateWithoutInsightsInput, Prisma.RoomUncheckedUpdateWithoutInsightsInput>;
+};
+export type RoomUpdateWithoutInsightsInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    code?: Prisma.StringFieldUpdateOperationsInput | string;
+    qrCodeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    status?: Prisma.EnumRoomStatusFieldUpdateOperationsInput | $Enums.RoomStatus;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    roomStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    lead?: Prisma.UserUpdateOneWithoutCurrentRoomNestedInput;
+    members?: Prisma.RoomMemberUpdateManyWithoutRoomNestedInput;
+    milestones?: Prisma.MilestoneUpdateManyWithoutRoomNestedInput;
+    chatSessions?: Prisma.ChatSessionUpdateManyWithoutRoomNestedInput;
+};
+export type RoomUncheckedUpdateWithoutInsightsInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    code?: Prisma.StringFieldUpdateOperationsInput | string;
+    qrCodeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    status?: Prisma.EnumRoomStatusFieldUpdateOperationsInput | $Enums.RoomStatus;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    roomStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    lead?: Prisma.UserUncheckedUpdateOneWithoutCurrentRoomNestedInput;
+    members?: Prisma.RoomMemberUncheckedUpdateManyWithoutRoomNestedInput;
+    milestones?: Prisma.MilestoneUncheckedUpdateManyWithoutRoomNestedInput;
+    chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutRoomNestedInput;
 };
 /**
  * Count Type RoomCountOutputType
@@ -631,11 +734,13 @@ export type RoomCountOutputType = {
     members: number;
     milestones: number;
     chatSessions: number;
+    insights: number;
 };
 export type RoomCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     members?: boolean | RoomCountOutputTypeCountMembersArgs;
     milestones?: boolean | RoomCountOutputTypeCountMilestonesArgs;
     chatSessions?: boolean | RoomCountOutputTypeCountChatSessionsArgs;
+    insights?: boolean | RoomCountOutputTypeCountInsightsArgs;
 };
 /**
  * RoomCountOutputType without action
@@ -664,6 +769,12 @@ export type RoomCountOutputTypeCountMilestonesArgs<ExtArgs extends runtime.Types
 export type RoomCountOutputTypeCountChatSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.ChatSessionWhereInput;
 };
+/**
+ * RoomCountOutputType without action
+ */
+export type RoomCountOutputTypeCountInsightsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.AIInsightWhereInput;
+};
 export type RoomSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
     code?: boolean;
@@ -676,6 +787,7 @@ export type RoomSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
     members?: boolean | Prisma.Room$membersArgs<ExtArgs>;
     milestones?: boolean | Prisma.Room$milestonesArgs<ExtArgs>;
     chatSessions?: boolean | Prisma.Room$chatSessionsArgs<ExtArgs>;
+    insights?: boolean | Prisma.Room$insightsArgs<ExtArgs>;
     _count?: boolean | Prisma.RoomCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["room"]>;
 export type RoomSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -711,6 +823,7 @@ export type RoomInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     members?: boolean | Prisma.Room$membersArgs<ExtArgs>;
     milestones?: boolean | Prisma.Room$milestonesArgs<ExtArgs>;
     chatSessions?: boolean | Prisma.Room$chatSessionsArgs<ExtArgs>;
+    insights?: boolean | Prisma.Room$insightsArgs<ExtArgs>;
     _count?: boolean | Prisma.RoomCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type RoomIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {};
@@ -722,6 +835,7 @@ export type $RoomPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
         members: Prisma.$RoomMemberPayload<ExtArgs>[];
         milestones: Prisma.$MilestonePayload<ExtArgs>[];
         chatSessions: Prisma.$ChatSessionPayload<ExtArgs>[];
+        insights: Prisma.$AIInsightPayload<ExtArgs>[];
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: string;
@@ -1064,6 +1178,7 @@ export interface Prisma__RoomClient<T, Null = never, ExtArgs extends runtime.Typ
     members<T extends Prisma.Room$membersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Room$membersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RoomMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     milestones<T extends Prisma.Room$milestonesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Room$milestonesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MilestonePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     chatSessions<T extends Prisma.Room$chatSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Room$chatSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    insights<T extends Prisma.Room$insightsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Room$insightsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AIInsightPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1552,6 +1667,29 @@ export type Room$chatSessionsArgs<ExtArgs extends runtime.Types.Extensions.Inter
     take?: number;
     skip?: number;
     distinct?: Prisma.ChatSessionScalarFieldEnum | Prisma.ChatSessionScalarFieldEnum[];
+};
+/**
+ * Room.insights
+ */
+export type Room$insightsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AIInsight
+     */
+    select?: Prisma.AIInsightSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the AIInsight
+     */
+    omit?: Prisma.AIInsightOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.AIInsightInclude<ExtArgs> | null;
+    where?: Prisma.AIInsightWhereInput;
+    orderBy?: Prisma.AIInsightOrderByWithRelationInput | Prisma.AIInsightOrderByWithRelationInput[];
+    cursor?: Prisma.AIInsightWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.AIInsightScalarFieldEnum | Prisma.AIInsightScalarFieldEnum[];
 };
 /**
  * Room without action

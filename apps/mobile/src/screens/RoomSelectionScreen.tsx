@@ -12,17 +12,29 @@ import {
 } from 'react-native';
 import { useUser } from '../context/UserContext';
 import { generateRoomCode, generateQRCodeUrl } from '@twynd/shared/utils';
+import { SettingsScreen } from './SettingsScreen';
 
 interface RoomSelectionScreenProps {
   onComplete?: () => void;
 }
 
 export const RoomSelectionScreen: React.FC<RoomSelectionScreenProps> = ({ onComplete }) => {
-  const { user, setCurrentRoomId } = useUser();
+  const { user, setCurrentRoomId, logout } = useUser();
   const [mode, setMode] = useState<'select' | 'create' | 'join' | null>(null);
   const [loading, setLoading] = useState(false);
   const [roomCode, setRoomCode] = useState('');
   const [createdRoom, setCreatedRoom] = useState<{ code: string; qrUrl: string } | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
+
+  if (showSettings) {
+    return (
+      <SettingsScreen
+        onBack={() => setShowSettings(false)}
+        onLeaveRoom={() => {}}
+        onDeleteAccount={() => logout()}
+      />
+    );
+  }
 
   const handleCreateRoom = async () => {
     setLoading(true);
@@ -68,40 +80,51 @@ export const RoomSelectionScreen: React.FC<RoomSelectionScreenProps> = ({ onComp
   // Selection Screen
   if (!mode) {
     return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.content}>
-          <Text style={styles.title}>Let's Connect</Text>
-          <Text style={styles.subtitle}>
-            {user?.nickname}, choose what you'd like to do
-          </Text>
-
-          {/* Create Room Card */}
+      <View style={styles.screenContainer}>
+        <View style={styles.header}>
           <TouchableOpacity
-            style={styles.card}
-            onPress={() => setMode('create')}
+            style={styles.menuButton}
+            onPress={() => setShowSettings(true)}
           >
-            <Text style={styles.cardIcon}>✨</Text>
-            <Text style={styles.cardTitle}>Create Room</Text>
-            <Text style={styles.cardDescription}>
-              Start a new connection and share your QR code
-            </Text>
-            <Text style={styles.cardNote}>Free once per day</Text>
+            <Text style={styles.menuIcon}>☰</Text>
           </TouchableOpacity>
-
-          {/* Join Room Card */}
-          <TouchableOpacity
-            style={styles.card}
-            onPress={() => setMode('join')}
-          >
-            <Text style={styles.cardIcon}>🔗</Text>
-            <Text style={styles.cardTitle}>Join Room</Text>
-            <Text style={styles.cardDescription}>
-              Scan a QR code or enter a room code
-            </Text>
-            <Text style={styles.cardNote}>Unlimited joins</Text>
-          </TouchableOpacity>
+          <View style={styles.headerSpacer} />
         </View>
-      </ScrollView>
+        <ScrollView contentContainerStyle={styles.container}>
+          <View style={styles.content}>
+            <Text style={styles.title}>Let's Connect</Text>
+            <Text style={styles.subtitle}>
+              {user?.nickname}, choose what you'd like to do
+            </Text>
+
+            {/* Create Room Card */}
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => setMode('create')}
+            >
+              <Text style={styles.cardIcon}>✨</Text>
+              <Text style={styles.cardTitle}>Create Room</Text>
+              <Text style={styles.cardDescription}>
+                Start a new connection and share your QR code
+              </Text>
+              <Text style={styles.cardNote}>Free once per day</Text>
+            </TouchableOpacity>
+
+            {/* Join Room Card */}
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => setMode('join')}
+            >
+              <Text style={styles.cardIcon}>🔗</Text>
+              <Text style={styles.cardTitle}>Join Room</Text>
+              <Text style={styles.cardDescription}>
+                Scan a QR code or enter a room code
+              </Text>
+              <Text style={styles.cardNote}>Unlimited joins</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </View>
     );
   }
 
@@ -334,6 +357,27 @@ export const RoomSelectionScreen: React.FC<RoomSelectionScreenProps> = ({ onComp
 };
 
 const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  menuButton: {
+    padding: 8,
+  },
+  menuIcon: {
+    fontSize: 24,
+  },
+  headerSpacer: {
+    flex: 1,
+  },
   container: {
     flexGrow: 1,
     backgroundColor: '#fff',

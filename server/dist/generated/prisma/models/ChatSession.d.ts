@@ -160,6 +160,7 @@ export type ChatSessionWhereInput = {
     updatedAt?: Prisma.DateTimeFilter<"ChatSession"> | Date | string;
     room?: Prisma.XOR<Prisma.RoomScalarRelationFilter, Prisma.RoomWhereInput>;
     messages?: Prisma.MessageListRelationFilter;
+    milestone?: Prisma.XOR<Prisma.MilestoneNullableScalarRelationFilter, Prisma.MilestoneWhereInput> | null;
 };
 export type ChatSessionOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -172,6 +173,7 @@ export type ChatSessionOrderByWithRelationInput = {
     updatedAt?: Prisma.SortOrder;
     room?: Prisma.RoomOrderByWithRelationInput;
     messages?: Prisma.MessageOrderByRelationAggregateInput;
+    milestone?: Prisma.MilestoneOrderByWithRelationInput;
 };
 export type ChatSessionWhereUniqueInput = Prisma.AtLeast<{
     id?: string;
@@ -187,6 +189,7 @@ export type ChatSessionWhereUniqueInput = Prisma.AtLeast<{
     updatedAt?: Prisma.DateTimeFilter<"ChatSession"> | Date | string;
     room?: Prisma.XOR<Prisma.RoomScalarRelationFilter, Prisma.RoomWhereInput>;
     messages?: Prisma.MessageListRelationFilter;
+    milestone?: Prisma.XOR<Prisma.MilestoneNullableScalarRelationFilter, Prisma.MilestoneWhereInput> | null;
 }, "id">;
 export type ChatSessionOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
@@ -224,6 +227,7 @@ export type ChatSessionCreateInput = {
     updatedAt?: Date | string;
     room: Prisma.RoomCreateNestedOneWithoutChatSessionsInput;
     messages?: Prisma.MessageCreateNestedManyWithoutChatSessionInput;
+    milestone?: Prisma.MilestoneCreateNestedOneWithoutChatSessionInput;
 };
 export type ChatSessionUncheckedCreateInput = {
     id?: string;
@@ -235,6 +239,7 @@ export type ChatSessionUncheckedCreateInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     messages?: Prisma.MessageUncheckedCreateNestedManyWithoutChatSessionInput;
+    milestone?: Prisma.MilestoneUncheckedCreateNestedOneWithoutChatSessionInput;
 };
 export type ChatSessionUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -246,6 +251,7 @@ export type ChatSessionUpdateInput = {
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     room?: Prisma.RoomUpdateOneRequiredWithoutChatSessionsNestedInput;
     messages?: Prisma.MessageUpdateManyWithoutChatSessionNestedInput;
+    milestone?: Prisma.MilestoneUpdateOneWithoutChatSessionNestedInput;
 };
 export type ChatSessionUncheckedUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -257,6 +263,7 @@ export type ChatSessionUncheckedUpdateInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     messages?: Prisma.MessageUncheckedUpdateManyWithoutChatSessionNestedInput;
+    milestone?: Prisma.MilestoneUncheckedUpdateOneWithoutChatSessionNestedInput;
 };
 export type ChatSessionCreateManyInput = {
     id?: string;
@@ -327,6 +334,10 @@ export type ChatSessionScalarRelationFilter = {
     is?: Prisma.ChatSessionWhereInput;
     isNot?: Prisma.ChatSessionWhereInput;
 };
+export type ChatSessionNullableScalarRelationFilter = {
+    is?: Prisma.ChatSessionWhereInput | null;
+    isNot?: Prisma.ChatSessionWhereInput | null;
+};
 export type ChatSessionCreateNestedManyWithoutRoomInput = {
     create?: Prisma.XOR<Prisma.ChatSessionCreateWithoutRoomInput, Prisma.ChatSessionUncheckedCreateWithoutRoomInput> | Prisma.ChatSessionCreateWithoutRoomInput[] | Prisma.ChatSessionUncheckedCreateWithoutRoomInput[];
     connectOrCreate?: Prisma.ChatSessionCreateOrConnectWithoutRoomInput | Prisma.ChatSessionCreateOrConnectWithoutRoomInput[];
@@ -377,6 +388,20 @@ export type ChatSessionUpdateOneRequiredWithoutMessagesNestedInput = {
     connect?: Prisma.ChatSessionWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.ChatSessionUpdateToOneWithWhereWithoutMessagesInput, Prisma.ChatSessionUpdateWithoutMessagesInput>, Prisma.ChatSessionUncheckedUpdateWithoutMessagesInput>;
 };
+export type ChatSessionCreateNestedOneWithoutMilestoneInput = {
+    create?: Prisma.XOR<Prisma.ChatSessionCreateWithoutMilestoneInput, Prisma.ChatSessionUncheckedCreateWithoutMilestoneInput>;
+    connectOrCreate?: Prisma.ChatSessionCreateOrConnectWithoutMilestoneInput;
+    connect?: Prisma.ChatSessionWhereUniqueInput;
+};
+export type ChatSessionUpdateOneWithoutMilestoneNestedInput = {
+    create?: Prisma.XOR<Prisma.ChatSessionCreateWithoutMilestoneInput, Prisma.ChatSessionUncheckedCreateWithoutMilestoneInput>;
+    connectOrCreate?: Prisma.ChatSessionCreateOrConnectWithoutMilestoneInput;
+    upsert?: Prisma.ChatSessionUpsertWithoutMilestoneInput;
+    disconnect?: Prisma.ChatSessionWhereInput | boolean;
+    delete?: Prisma.ChatSessionWhereInput | boolean;
+    connect?: Prisma.ChatSessionWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.ChatSessionUpdateToOneWithWhereWithoutMilestoneInput, Prisma.ChatSessionUpdateWithoutMilestoneInput>, Prisma.ChatSessionUncheckedUpdateWithoutMilestoneInput>;
+};
 export type ChatSessionCreateWithoutRoomInput = {
     id?: string;
     gameType?: string | null;
@@ -386,6 +411,7 @@ export type ChatSessionCreateWithoutRoomInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     messages?: Prisma.MessageCreateNestedManyWithoutChatSessionInput;
+    milestone?: Prisma.MilestoneCreateNestedOneWithoutChatSessionInput;
 };
 export type ChatSessionUncheckedCreateWithoutRoomInput = {
     id?: string;
@@ -396,6 +422,7 @@ export type ChatSessionUncheckedCreateWithoutRoomInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     messages?: Prisma.MessageUncheckedCreateNestedManyWithoutChatSessionInput;
+    milestone?: Prisma.MilestoneUncheckedCreateNestedOneWithoutChatSessionInput;
 };
 export type ChatSessionCreateOrConnectWithoutRoomInput = {
     where: Prisma.ChatSessionWhereUniqueInput;
@@ -440,6 +467,7 @@ export type ChatSessionCreateWithoutMessagesInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     room: Prisma.RoomCreateNestedOneWithoutChatSessionsInput;
+    milestone?: Prisma.MilestoneCreateNestedOneWithoutChatSessionInput;
 };
 export type ChatSessionUncheckedCreateWithoutMessagesInput = {
     id?: string;
@@ -450,6 +478,7 @@ export type ChatSessionUncheckedCreateWithoutMessagesInput = {
     lastMessageAt?: Date | string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    milestone?: Prisma.MilestoneUncheckedCreateNestedOneWithoutChatSessionInput;
 };
 export type ChatSessionCreateOrConnectWithoutMessagesInput = {
     where: Prisma.ChatSessionWhereUniqueInput;
@@ -473,6 +502,7 @@ export type ChatSessionUpdateWithoutMessagesInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     room?: Prisma.RoomUpdateOneRequiredWithoutChatSessionsNestedInput;
+    milestone?: Prisma.MilestoneUpdateOneWithoutChatSessionNestedInput;
 };
 export type ChatSessionUncheckedUpdateWithoutMessagesInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -483,6 +513,64 @@ export type ChatSessionUncheckedUpdateWithoutMessagesInput = {
     lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    milestone?: Prisma.MilestoneUncheckedUpdateOneWithoutChatSessionNestedInput;
+};
+export type ChatSessionCreateWithoutMilestoneInput = {
+    id?: string;
+    gameType?: string | null;
+    title?: string;
+    results?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
+    lastMessageAt?: Date | string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    room: Prisma.RoomCreateNestedOneWithoutChatSessionsInput;
+    messages?: Prisma.MessageCreateNestedManyWithoutChatSessionInput;
+};
+export type ChatSessionUncheckedCreateWithoutMilestoneInput = {
+    id?: string;
+    roomId: string;
+    gameType?: string | null;
+    title?: string;
+    results?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
+    lastMessageAt?: Date | string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    messages?: Prisma.MessageUncheckedCreateNestedManyWithoutChatSessionInput;
+};
+export type ChatSessionCreateOrConnectWithoutMilestoneInput = {
+    where: Prisma.ChatSessionWhereUniqueInput;
+    create: Prisma.XOR<Prisma.ChatSessionCreateWithoutMilestoneInput, Prisma.ChatSessionUncheckedCreateWithoutMilestoneInput>;
+};
+export type ChatSessionUpsertWithoutMilestoneInput = {
+    update: Prisma.XOR<Prisma.ChatSessionUpdateWithoutMilestoneInput, Prisma.ChatSessionUncheckedUpdateWithoutMilestoneInput>;
+    create: Prisma.XOR<Prisma.ChatSessionCreateWithoutMilestoneInput, Prisma.ChatSessionUncheckedCreateWithoutMilestoneInput>;
+    where?: Prisma.ChatSessionWhereInput;
+};
+export type ChatSessionUpdateToOneWithWhereWithoutMilestoneInput = {
+    where?: Prisma.ChatSessionWhereInput;
+    data: Prisma.XOR<Prisma.ChatSessionUpdateWithoutMilestoneInput, Prisma.ChatSessionUncheckedUpdateWithoutMilestoneInput>;
+};
+export type ChatSessionUpdateWithoutMilestoneInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    gameType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    title?: Prisma.StringFieldUpdateOperationsInput | string;
+    results?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
+    lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    room?: Prisma.RoomUpdateOneRequiredWithoutChatSessionsNestedInput;
+    messages?: Prisma.MessageUpdateManyWithoutChatSessionNestedInput;
+};
+export type ChatSessionUncheckedUpdateWithoutMilestoneInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    roomId?: Prisma.StringFieldUpdateOperationsInput | string;
+    gameType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    title?: Prisma.StringFieldUpdateOperationsInput | string;
+    results?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
+    lastMessageAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    messages?: Prisma.MessageUncheckedUpdateManyWithoutChatSessionNestedInput;
 };
 export type ChatSessionCreateManyRoomInput = {
     id?: string;
@@ -502,6 +590,7 @@ export type ChatSessionUpdateWithoutRoomInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     messages?: Prisma.MessageUpdateManyWithoutChatSessionNestedInput;
+    milestone?: Prisma.MilestoneUpdateOneWithoutChatSessionNestedInput;
 };
 export type ChatSessionUncheckedUpdateWithoutRoomInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -512,6 +601,7 @@ export type ChatSessionUncheckedUpdateWithoutRoomInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     messages?: Prisma.MessageUncheckedUpdateManyWithoutChatSessionNestedInput;
+    milestone?: Prisma.MilestoneUncheckedUpdateOneWithoutChatSessionNestedInput;
 };
 export type ChatSessionUncheckedUpdateManyWithoutRoomInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -557,6 +647,7 @@ export type ChatSessionSelect<ExtArgs extends runtime.Types.Extensions.InternalA
     updatedAt?: boolean;
     room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>;
     messages?: boolean | Prisma.ChatSession$messagesArgs<ExtArgs>;
+    milestone?: boolean | Prisma.ChatSession$milestoneArgs<ExtArgs>;
     _count?: boolean | Prisma.ChatSessionCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["chatSession"]>;
 export type ChatSessionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -595,6 +686,7 @@ export type ChatSessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type ChatSessionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>;
     messages?: boolean | Prisma.ChatSession$messagesArgs<ExtArgs>;
+    milestone?: boolean | Prisma.ChatSession$milestoneArgs<ExtArgs>;
     _count?: boolean | Prisma.ChatSessionCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type ChatSessionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -608,6 +700,7 @@ export type $ChatSessionPayload<ExtArgs extends runtime.Types.Extensions.Interna
     objects: {
         room: Prisma.$RoomPayload<ExtArgs>;
         messages: Prisma.$MessagePayload<ExtArgs>[];
+        milestone: Prisma.$MilestonePayload<ExtArgs> | null;
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: string;
@@ -949,6 +1042,7 @@ export interface Prisma__ChatSessionClient<T, Null = never, ExtArgs extends runt
     readonly [Symbol.toStringTag]: "PrismaPromise";
     room<T extends Prisma.RoomDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RoomDefaultArgs<ExtArgs>>): Prisma.Prisma__RoomClient<runtime.Types.Result.GetResult<Prisma.$RoomPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
     messages<T extends Prisma.ChatSession$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatSession$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    milestone<T extends Prisma.ChatSession$milestoneArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatSession$milestoneArgs<ExtArgs>>): Prisma.Prisma__MilestoneClient<runtime.Types.Result.GetResult<Prisma.$MilestonePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1382,6 +1476,24 @@ export type ChatSession$messagesArgs<ExtArgs extends runtime.Types.Extensions.In
     take?: number;
     skip?: number;
     distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[];
+};
+/**
+ * ChatSession.milestone
+ */
+export type ChatSession$milestoneArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Milestone
+     */
+    select?: Prisma.MilestoneSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the Milestone
+     */
+    omit?: Prisma.MilestoneOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.MilestoneInclude<ExtArgs> | null;
+    where?: Prisma.MilestoneWhereInput;
 };
 /**
  * ChatSession without action

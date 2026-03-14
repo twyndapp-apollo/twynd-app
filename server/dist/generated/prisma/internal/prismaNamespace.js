@@ -48,7 +48,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.defineExtension = exports.JsonNullValueFilter = exports.NullsOrder = exports.QueryMode = exports.NullableJsonNullValueInput = exports.SortOrder = exports.MilestoneScalarFieldEnum = exports.SubscriptionScalarFieldEnum = exports.MessageScalarFieldEnum = exports.ChatSessionScalarFieldEnum = exports.RoomAccessScalarFieldEnum = exports.RoomMemberScalarFieldEnum = exports.RoomScalarFieldEnum = exports.UserScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.prismaVersion = exports.getExtensionContext = exports.Decimal = exports.Sql = exports.raw = exports.join = exports.empty = exports.sql = exports.PrismaClientValidationError = exports.PrismaClientInitializationError = exports.PrismaClientRustPanicError = exports.PrismaClientUnknownRequestError = exports.PrismaClientKnownRequestError = void 0;
+exports.defineExtension = exports.JsonNullValueFilter = exports.NullsOrder = exports.QueryMode = exports.JsonNullValueInput = exports.NullableJsonNullValueInput = exports.SortOrder = exports.AIInsightScalarFieldEnum = exports.MilestoneScalarFieldEnum = exports.SubscriptionScalarFieldEnum = exports.MessageScalarFieldEnum = exports.ChatSessionScalarFieldEnum = exports.RoomAccessScalarFieldEnum = exports.RoomMemberScalarFieldEnum = exports.RoomScalarFieldEnum = exports.UserScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.prismaVersion = exports.getExtensionContext = exports.Decimal = exports.Sql = exports.raw = exports.join = exports.empty = exports.sql = exports.PrismaClientValidationError = exports.PrismaClientInitializationError = exports.PrismaClientRustPanicError = exports.PrismaClientUnknownRequestError = exports.PrismaClientKnownRequestError = void 0;
 const runtime = __importStar(require("@prisma/client/runtime/library"));
 /**
  * Prisma Errors
@@ -110,7 +110,8 @@ exports.ModelName = {
     ChatSession: 'ChatSession',
     Message: 'Message',
     Subscription: 'Subscription',
-    Milestone: 'Milestone'
+    Milestone: 'Milestone',
+    AIInsight: 'AIInsight'
 };
 /**
  * Enums
@@ -128,22 +129,10 @@ exports.UserScalarFieldEnum = {
     authProviderId: 'authProviderId',
     nickname: 'nickname',
     avatar: 'avatar',
-    birthDate: 'birthDate',
-    zodiacSign: 'zodiacSign',
-    age: 'age',
-    language: 'language',
-    country: 'country',
-    description: 'description',
-    showAge: 'showAge',
-    showZodiac: 'showZodiac',
-    showBirthday: 'showBirthday',
-    showLocation: 'showLocation',
     currentRoomId: 'currentRoomId',
     connectionPartnerId: 'connectionPartnerId',
     isRoomLead: 'isRoomLead',
     lastActiveAt: 'lastActiveAt',
-    statusEmoji: 'statusEmoji',
-    statusMessage: 'statusMessage',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };
@@ -204,6 +193,7 @@ exports.SubscriptionScalarFieldEnum = {
     referralCode: 'referralCode',
     referralCount: 'referralCount',
     referralExtensionDays: 'referralExtensionDays',
+    referralGeneratedAt: 'referralGeneratedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };
@@ -214,7 +204,19 @@ exports.MilestoneScalarFieldEnum = {
     milestoneTitle: 'milestoneTitle',
     description: 'description',
     aiGeneratedPoem: 'aiGeneratedPoem',
+    chatSessionId: 'chatSessionId',
+    leadConsentToShare: 'leadConsentToShare',
+    followerConsentToShare: 'followerConsentToShare',
     awardedAt: 'awardedAt'
+};
+exports.AIInsightScalarFieldEnum = {
+    id: 'id',
+    roomId: 'roomId',
+    relationshipMetrics: 'relationshipMetrics',
+    interestMetrics: 'interestMetrics',
+    sparkMetrics: 'sparkMetrics',
+    summaryText: 'summaryText',
+    generatedAt: 'generatedAt'
 };
 exports.SortOrder = {
     asc: 'asc',
@@ -222,6 +224,9 @@ exports.SortOrder = {
 };
 exports.NullableJsonNullValueInput = {
     DbNull: exports.DbNull,
+    JsonNull: exports.JsonNull
+};
+exports.JsonNullValueInput = {
     JsonNull: exports.JsonNull
 };
 exports.QueryMode = {

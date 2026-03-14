@@ -4,30 +4,94 @@
  */
 
 // ============ USER TYPES ============
+// ============ SERVER USER (public identity only) ============
+// Stored on server — used for room invitations and chat display only.
 export interface UserProfile {
   id: string;
   email: string;
   nickname: string;
   avatar?: string;
-  birthDate?: Date;
+  isRoomLead: boolean;
+  currentRoomId?: string;
+  connectionPartnerId?: string;
+}
+
+// ============ LOCAL-ONLY TYPES (never sent to server) ============
+
+export interface ProfileAttribute {
+  key: string;
+  value: string;
+}
+
+/** Full personal profile stored in AsyncStorage on the user's own device. */
+export interface LocalMyProfile {
+  // Personal details
+  birthDate?: string;        // ISO string
   zodiacSign?: string;
   age?: number;
-  language: string;
+  language?: string;
   country?: string;
   description?: string;
-  statusEmoji?: string;
-  statusMessage?: string;
-  
-  // Privacy settings
+  // Privacy settings (control what partner sees over WebSocket)
   showAge: boolean;
   showZodiac: boolean;
   showBirthday: boolean;
   showLocation: boolean;
-  
-  // Connection status
-  isRoomLead: boolean;
-  currentRoomId?: string;
-  connectionPartnerId?: string;
+  // Status (synced to partner via WebSocket)
+  statusEmoji: string;
+  statusMessage: string;
+  // Location (synced to partner via WebSocket)
+  latitude?: number;
+  longitude?: number;
+  locationCity?: string;
+  locationUpdatedAt?: string;
+  // Profile cards (synced to partner via WebSocket)
+  summary?: string;
+  preferences: ProfileAttribute[];
+  character: ProfileAttribute[];
+  info: ProfileAttribute[];
+}
+
+/** Partner's data stored locally after WebSocket sync. Lead is source of truth. */
+export interface LocalPartnerProfile {
+  // From server (fetched once on room join)
+  id: string;
+  nickname: string;
+  avatar?: string;
+  // Personal details shared by partner (filtered by their privacy settings)
+  zodiacSign?: string;
+  age?: number;
+  country?: string;
+  // Status (received via WebSocket)
+  statusEmoji: string;
+  statusMessage: string;
+  // Location (received via WebSocket)
+  locationCity?: string;
+  distanceKm?: number;
+  // Profile cards (received via WebSocket)
+  summary?: string;
+  preferences: ProfileAttribute[];
+  character: ProfileAttribute[];
+  info: ProfileAttribute[];
+  // Sync metadata
+  lastSyncedAt: string;      // ISO string
+}
+
+// ============ US DASHBOARD (assembled entirely from local storage) ============
+export interface UsDashboard {
+  me: LocalMyProfile & { id: string; nickname: string; avatar?: string };
+  partner: LocalPartnerProfile | null;
+}
+
+// ============ WIDGET DATA (written to shared storage by app, read by widget) ============
+export interface WidgetData {
+  partnerNickname: string;
+  partnerAvatar?: string;
+  partnerEmoji: string;
+  partnerStatusMessage: string;
+  partnerLocationCity?: string;
+  distanceKm?: number;
+  lastUpdatedAt: string;
 }
 
 export interface UserSession {
@@ -95,6 +159,7 @@ export interface ChatSession {
   roomId: string;
   gameType?: string;
   title: string;
+  milestoneId?: string;
   lastMessageAt?: Date;
   unreadCount: number;
   createdAt: Date;
@@ -150,6 +215,9 @@ export interface Milestone {
   title: string;
   description?: string;
   aiGeneratedPoem?: string;
+  chatSessionId?: string;
+  leadConsentToShare: boolean;
+  followerConsentToShare: boolean;
   awardedAt: Date;
 }
 
@@ -185,11 +253,23 @@ export interface SparkMetrics {
 }
 
 export interface AIInsight {
+  id: string;
+  roomId: string;
   date: Date;
+  generatedAt: Date;
   relationshipMetrics: RelationshipMetrics;
   interestMetrics: InterestMetrics;
   sparkMetrics: SparkMetrics;
   summaryText: string;
+}
+
+// ============ VIBES DASHBOARD ============
+export interface VibesDashboard {
+  daysTogetherCount: number;
+  roomStartedAt: Date | null;
+  milestones: Milestone[];
+  latestInsight: AIInsight | null;
+  relationshipSummary: string;
 }
 
 // ============ API RESPONSE TYPES ============
@@ -213,4 +293,70 @@ export interface WebSocketMessage {
   type: 'message' | 'typing' | 'online_status' | 'reaction' | 'game_update';
   payload: any;
   timestamp: Date;
+}
+
+// ============ LOCAL CHAT TYPES (device-only, never sent to server) ============
+
+export interface LocalChatMessage {
+  id: string;
+  sessionId: string;
+  senderId: string;
+  text: string;
+  contentType: 'text' | 'game_result';
+  gameResultData?: LocalGameResult;
+  timestamp: string;   // ISO string
+  isRead: boolean;
+}
+
+export interface LocalChatSession {
+  id: string;
+  title: string;
+  gameType?: string;
+  milestoneId?: string;
+  lastMessageAt: string;      // ISO string — sorted descending in store
+  lastMessagePreview?: string;
+  unreadCount: number;
+  createdAt: string;          // ISO string
+}
+
+export interface LocalGameResult {
+  gameType: string;
+  myAnswers: Record<string, string>;       // questionId → answer
+  partnerAnswers: Record<string, string>;  // questionId → answer
+  questions: GameQuestion[];
+  matchScore: number;                      // 0–100
+  completedAt: string;                     // ISO string
+}
+
+// ============ GAME DEFINITION (pluggable registry) ============
+
+export interface GameDefinition {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+  category: 'connection' | 'fun' | 'deep' | 'challenge';
+  getTemplatedQuestions(): GameQuestion[];
+}
+
+// ============ ON-DEVICE AI TYPES ============
+
+export type MetricTrend = 'up' | 'neutral' | 'down';
+
+export interface MetricWithInsight {
+  score: number;         // 0–100
+  trend: MetricTrend;
+  insight: string;       // one-sentence daily insight
+}
+
+export interface DailyAIAnalysis {
+  date: string;          // 'YYYY-MM-DD'
+  generatedAt: string;   // ISO
+  relationship: { [K in keyof RelationshipMetrics]: MetricWithInsight };
+  interest: { [K in keyof InterestMetrics]: MetricWithInsight };
+  spark: { [K in keyof SparkMetrics]: MetricWithInsight };
+  individualitySummaryMe: string;
+  individualitySummaryPartner: string;
+  relationshipSummary: string;
+  aiQuestions: { [gameId: string]: GameQuestion[] };  // AI-generated extras per game
 }

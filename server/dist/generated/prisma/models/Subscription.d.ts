@@ -33,6 +33,7 @@ export type SubscriptionMinAggregateOutputType = {
     referralCode: string | null;
     referralCount: number | null;
     referralExtensionDays: number | null;
+    referralGeneratedAt: Date | null;
     createdAt: Date | null;
     updatedAt: Date | null;
 };
@@ -48,6 +49,7 @@ export type SubscriptionMaxAggregateOutputType = {
     referralCode: string | null;
     referralCount: number | null;
     referralExtensionDays: number | null;
+    referralGeneratedAt: Date | null;
     createdAt: Date | null;
     updatedAt: Date | null;
 };
@@ -63,6 +65,7 @@ export type SubscriptionCountAggregateOutputType = {
     referralCode: number;
     referralCount: number;
     referralExtensionDays: number;
+    referralGeneratedAt: number;
     createdAt: number;
     updatedAt: number;
     _all: number;
@@ -87,6 +90,7 @@ export type SubscriptionMinAggregateInputType = {
     referralCode?: true;
     referralCount?: true;
     referralExtensionDays?: true;
+    referralGeneratedAt?: true;
     createdAt?: true;
     updatedAt?: true;
 };
@@ -102,6 +106,7 @@ export type SubscriptionMaxAggregateInputType = {
     referralCode?: true;
     referralCount?: true;
     referralExtensionDays?: true;
+    referralGeneratedAt?: true;
     createdAt?: true;
     updatedAt?: true;
 };
@@ -117,6 +122,7 @@ export type SubscriptionCountAggregateInputType = {
     referralCode?: true;
     referralCount?: true;
     referralExtensionDays?: true;
+    referralGeneratedAt?: true;
     createdAt?: true;
     updatedAt?: true;
     _all?: true;
@@ -209,6 +215,7 @@ export type SubscriptionGroupByOutputType = {
     referralCode: string;
     referralCount: number;
     referralExtensionDays: number;
+    referralGeneratedAt: Date;
     createdAt: Date;
     updatedAt: Date;
     _count: SubscriptionCountAggregateOutputType | null;
@@ -235,6 +242,7 @@ export type SubscriptionWhereInput = {
     referralCode?: Prisma.StringFilter<"Subscription"> | string;
     referralCount?: Prisma.IntFilter<"Subscription"> | number;
     referralExtensionDays?: Prisma.IntFilter<"Subscription"> | number;
+    referralGeneratedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string;
     createdAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string;
     user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>;
@@ -251,6 +259,7 @@ export type SubscriptionOrderByWithRelationInput = {
     referralCode?: Prisma.SortOrder;
     referralCount?: Prisma.SortOrder;
     referralExtensionDays?: Prisma.SortOrder;
+    referralGeneratedAt?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
     user?: Prisma.UserOrderByWithRelationInput;
@@ -270,6 +279,7 @@ export type SubscriptionWhereUniqueInput = Prisma.AtLeast<{
     trialEndDate?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null;
     referralCount?: Prisma.IntFilter<"Subscription"> | number;
     referralExtensionDays?: Prisma.IntFilter<"Subscription"> | number;
+    referralGeneratedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string;
     createdAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string;
     user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>;
@@ -286,6 +296,7 @@ export type SubscriptionOrderByWithAggregationInput = {
     referralCode?: Prisma.SortOrder;
     referralCount?: Prisma.SortOrder;
     referralExtensionDays?: Prisma.SortOrder;
+    referralGeneratedAt?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
     _count?: Prisma.SubscriptionCountOrderByAggregateInput;
@@ -309,6 +320,7 @@ export type SubscriptionScalarWhereWithAggregatesInput = {
     referralCode?: Prisma.StringWithAggregatesFilter<"Subscription"> | string;
     referralCount?: Prisma.IntWithAggregatesFilter<"Subscription"> | number;
     referralExtensionDays?: Prisma.IntWithAggregatesFilter<"Subscription"> | number;
+    referralGeneratedAt?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string;
     createdAt?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string;
     updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string;
 };
@@ -323,6 +335,7 @@ export type SubscriptionCreateInput = {
     referralCode?: string;
     referralCount?: number;
     referralExtensionDays?: number;
+    referralGeneratedAt?: Date | string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
     user: Prisma.UserCreateNestedOneWithoutSubscriptionInput;
@@ -339,6 +352,7 @@ export type SubscriptionUncheckedCreateInput = {
     referralCode?: string;
     referralCount?: number;
     referralExtensionDays?: number;
+    referralGeneratedAt?: Date | string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
 };
@@ -353,6 +367,7 @@ export type SubscriptionUpdateInput = {
     referralCode?: Prisma.StringFieldUpdateOperationsInput | string;
     referralCount?: Prisma.IntFieldUpdateOperationsInput | number;
     referralExtensionDays?: Prisma.IntFieldUpdateOperationsInput | number;
+    referralGeneratedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     user?: Prisma.UserUpdateOneRequiredWithoutSubscriptionNestedInput;
@@ -369,6 +384,7 @@ export type SubscriptionUncheckedUpdateInput = {
     referralCode?: Prisma.StringFieldUpdateOperationsInput | string;
     referralCount?: Prisma.IntFieldUpdateOperationsInput | number;
     referralExtensionDays?: Prisma.IntFieldUpdateOperationsInput | number;
+    referralGeneratedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -384,6 +400,7 @@ export type SubscriptionCreateManyInput = {
     referralCode?: string;
     referralCount?: number;
     referralExtensionDays?: number;
+    referralGeneratedAt?: Date | string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
 };
@@ -398,6 +415,7 @@ export type SubscriptionUpdateManyMutationInput = {
     referralCode?: Prisma.StringFieldUpdateOperationsInput | string;
     referralCount?: Prisma.IntFieldUpdateOperationsInput | number;
     referralExtensionDays?: Prisma.IntFieldUpdateOperationsInput | number;
+    referralGeneratedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -413,6 +431,7 @@ export type SubscriptionUncheckedUpdateManyInput = {
     referralCode?: Prisma.StringFieldUpdateOperationsInput | string;
     referralCount?: Prisma.IntFieldUpdateOperationsInput | number;
     referralExtensionDays?: Prisma.IntFieldUpdateOperationsInput | number;
+    referralGeneratedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -432,6 +451,7 @@ export type SubscriptionCountOrderByAggregateInput = {
     referralCode?: Prisma.SortOrder;
     referralCount?: Prisma.SortOrder;
     referralExtensionDays?: Prisma.SortOrder;
+    referralGeneratedAt?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
 };
@@ -451,6 +471,7 @@ export type SubscriptionMaxOrderByAggregateInput = {
     referralCode?: Prisma.SortOrder;
     referralCount?: Prisma.SortOrder;
     referralExtensionDays?: Prisma.SortOrder;
+    referralGeneratedAt?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
 };
@@ -466,6 +487,7 @@ export type SubscriptionMinOrderByAggregateInput = {
     referralCode?: Prisma.SortOrder;
     referralCount?: Prisma.SortOrder;
     referralExtensionDays?: Prisma.SortOrder;
+    referralGeneratedAt?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
 };
@@ -522,6 +544,7 @@ export type SubscriptionCreateWithoutUserInput = {
     referralCode?: string;
     referralCount?: number;
     referralExtensionDays?: number;
+    referralGeneratedAt?: Date | string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
 };
@@ -536,6 +559,7 @@ export type SubscriptionUncheckedCreateWithoutUserInput = {
     referralCode?: string;
     referralCount?: number;
     referralExtensionDays?: number;
+    referralGeneratedAt?: Date | string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
 };
@@ -563,6 +587,7 @@ export type SubscriptionUpdateWithoutUserInput = {
     referralCode?: Prisma.StringFieldUpdateOperationsInput | string;
     referralCount?: Prisma.IntFieldUpdateOperationsInput | number;
     referralExtensionDays?: Prisma.IntFieldUpdateOperationsInput | number;
+    referralGeneratedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -577,6 +602,7 @@ export type SubscriptionUncheckedUpdateWithoutUserInput = {
     referralCode?: Prisma.StringFieldUpdateOperationsInput | string;
     referralCount?: Prisma.IntFieldUpdateOperationsInput | number;
     referralExtensionDays?: Prisma.IntFieldUpdateOperationsInput | number;
+    referralGeneratedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
@@ -592,6 +618,7 @@ export type SubscriptionSelect<ExtArgs extends runtime.Types.Extensions.Internal
     referralCode?: boolean;
     referralCount?: boolean;
     referralExtensionDays?: boolean;
+    referralGeneratedAt?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
@@ -608,6 +635,7 @@ export type SubscriptionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
     referralCode?: boolean;
     referralCount?: boolean;
     referralExtensionDays?: boolean;
+    referralGeneratedAt?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
@@ -624,6 +652,7 @@ export type SubscriptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
     referralCode?: boolean;
     referralCount?: boolean;
     referralExtensionDays?: boolean;
+    referralGeneratedAt?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
@@ -640,10 +669,11 @@ export type SubscriptionSelectScalar = {
     referralCode?: boolean;
     referralCount?: boolean;
     referralExtensionDays?: boolean;
+    referralGeneratedAt?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
 };
-export type SubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "status" | "startDate" | "endDate" | "isTrialPeriod" | "trialStartDate" | "trialEndDate" | "referralCode" | "referralCount" | "referralExtensionDays" | "createdAt" | "updatedAt", ExtArgs["result"]["subscription"]>;
+export type SubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "status" | "startDate" | "endDate" | "isTrialPeriod" | "trialStartDate" | "trialEndDate" | "referralCode" | "referralCount" | "referralExtensionDays" | "referralGeneratedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["subscription"]>;
 export type SubscriptionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
 };
@@ -670,6 +700,7 @@ export type $SubscriptionPayload<ExtArgs extends runtime.Types.Extensions.Intern
         referralCode: string;
         referralCount: number;
         referralExtensionDays: number;
+        referralGeneratedAt: Date;
         createdAt: Date;
         updatedAt: Date;
     }, ExtArgs["result"]["subscription"]>;
@@ -1038,6 +1069,7 @@ export interface SubscriptionFieldRefs {
     readonly referralCode: Prisma.FieldRef<"Subscription", 'String'>;
     readonly referralCount: Prisma.FieldRef<"Subscription", 'Int'>;
     readonly referralExtensionDays: Prisma.FieldRef<"Subscription", 'Int'>;
+    readonly referralGeneratedAt: Prisma.FieldRef<"Subscription", 'DateTime'>;
     readonly createdAt: Prisma.FieldRef<"Subscription", 'DateTime'>;
     readonly updatedAt: Prisma.FieldRef<"Subscription", 'DateTime'>;
 }

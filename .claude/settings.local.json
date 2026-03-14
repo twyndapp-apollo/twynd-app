@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/Users/User/Dev/twynd-app -type f \\\\\\(-name *.json -o -name *.ts -o -name *.tsx -o -name *.js \\\\\\) ! -path */node_modules/* -newer /c/Users/User/Dev/twynd-app/README.md)",
+      "Bash(npx prisma:*)",
+      "Bash(npx expo:*)"
+    ]
+  }
+}

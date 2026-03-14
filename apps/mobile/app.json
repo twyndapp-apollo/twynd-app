@@ -1,8 +1,9 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "Twynd",
+    "slug": "twynd",
     "version": "1.0.0",
+    "scheme": "twynd",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -12,9 +13,14 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "app.twynd.mobile",
+      "entitlements": {
+        "com.apple.security.application-groups": ["group.app.twynd.widget"]
+      }
     },
     "android": {
+      "package": "app.twynd.mobile",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -25,6 +31,13 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      ["expo-location", {
+        "locationWhenInUsePermission": "Twynd uses your location to show your partner how far away you are.",
+        "locationAlwaysAndWhenInUsePermission": "Twynd uses your location to keep your partner widget up to date."
+      }],
+      "./app.plugin.js"
+    ]
   }
 }

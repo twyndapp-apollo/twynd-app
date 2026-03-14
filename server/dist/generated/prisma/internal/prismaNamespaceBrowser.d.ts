@@ -49,6 +49,7 @@ export declare const ModelName: {
     readonly Message: "Message";
     readonly Subscription: "Subscription";
     readonly Milestone: "Milestone";
+    readonly AIInsight: "AIInsight";
 };
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 export declare const TransactionIsolationLevel: {
@@ -65,22 +66,10 @@ export declare const UserScalarFieldEnum: {
     readonly authProviderId: "authProviderId";
     readonly nickname: "nickname";
     readonly avatar: "avatar";
-    readonly birthDate: "birthDate";
-    readonly zodiacSign: "zodiacSign";
-    readonly age: "age";
-    readonly language: "language";
-    readonly country: "country";
-    readonly description: "description";
-    readonly showAge: "showAge";
-    readonly showZodiac: "showZodiac";
-    readonly showBirthday: "showBirthday";
-    readonly showLocation: "showLocation";
     readonly currentRoomId: "currentRoomId";
     readonly connectionPartnerId: "connectionPartnerId";
     readonly isRoomLead: "isRoomLead";
     readonly lastActiveAt: "lastActiveAt";
-    readonly statusEmoji: "statusEmoji";
-    readonly statusMessage: "statusMessage";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
 };
@@ -147,6 +136,7 @@ export declare const SubscriptionScalarFieldEnum: {
     readonly referralCode: "referralCode";
     readonly referralCount: "referralCount";
     readonly referralExtensionDays: "referralExtensionDays";
+    readonly referralGeneratedAt: "referralGeneratedAt";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
 };
@@ -158,9 +148,22 @@ export declare const MilestoneScalarFieldEnum: {
     readonly milestoneTitle: "milestoneTitle";
     readonly description: "description";
     readonly aiGeneratedPoem: "aiGeneratedPoem";
+    readonly chatSessionId: "chatSessionId";
+    readonly leadConsentToShare: "leadConsentToShare";
+    readonly followerConsentToShare: "followerConsentToShare";
     readonly awardedAt: "awardedAt";
 };
 export type MilestoneScalarFieldEnum = (typeof MilestoneScalarFieldEnum)[keyof typeof MilestoneScalarFieldEnum];
+export declare const AIInsightScalarFieldEnum: {
+    readonly id: "id";
+    readonly roomId: "roomId";
+    readonly relationshipMetrics: "relationshipMetrics";
+    readonly interestMetrics: "interestMetrics";
+    readonly sparkMetrics: "sparkMetrics";
+    readonly summaryText: "summaryText";
+    readonly generatedAt: "generatedAt";
+};
+export type AIInsightScalarFieldEnum = (typeof AIInsightScalarFieldEnum)[keyof typeof AIInsightScalarFieldEnum];
 export declare const SortOrder: {
     readonly asc: "asc";
     readonly desc: "desc";
@@ -181,6 +184,15 @@ export declare const NullableJsonNullValueInput: {
     };
 };
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput];
+export declare const JsonNullValueInput: {
+    readonly JsonNull: {
+        "__#private@#private": any;
+        _getNamespace(): string;
+        _getName(): string;
+        toString(): string;
+    };
+};
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput];
 export declare const QueryMode: {
     readonly default: "default";
     readonly insensitive: "insensitive";

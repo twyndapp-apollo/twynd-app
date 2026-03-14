@@ -261,6 +261,7 @@ export declare const ModelName: {
     readonly Message: "Message";
     readonly Subscription: "Subscription";
     readonly Milestone: "Milestone";
+    readonly AIInsight: "AIInsight";
 };
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 export interface TypeMapCb<GlobalOmitOptions = {}> extends runtime.Types.Utils.Fn<{
@@ -273,7 +274,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         omit: GlobalOmitOptions;
     };
     meta: {
-        modelProps: "user" | "room" | "roomMember" | "roomAccess" | "chatSession" | "message" | "subscription" | "milestone";
+        modelProps: "user" | "room" | "roomMember" | "roomAccess" | "chatSession" | "message" | "subscription" | "milestone" | "aIInsight";
         txIsolationLevel: TransactionIsolationLevel;
     };
     model: {
@@ -869,6 +870,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 };
             };
         };
+        AIInsight: {
+            payload: Prisma.$AIInsightPayload<ExtArgs>;
+            fields: Prisma.AIInsightFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.AIInsightFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AIInsightPayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.AIInsightFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AIInsightPayload>;
+                };
+                findFirst: {
+                    args: Prisma.AIInsightFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AIInsightPayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.AIInsightFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AIInsightPayload>;
+                };
+                findMany: {
+                    args: Prisma.AIInsightFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AIInsightPayload>[];
+                };
+                create: {
+                    args: Prisma.AIInsightCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AIInsightPayload>;
+                };
+                createMany: {
+                    args: Prisma.AIInsightCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.AIInsightCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AIInsightPayload>[];
+                };
+                delete: {
+                    args: Prisma.AIInsightDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AIInsightPayload>;
+                };
+                update: {
+                    args: Prisma.AIInsightUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AIInsightPayload>;
+                };
+                deleteMany: {
+                    args: Prisma.AIInsightDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.AIInsightUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.AIInsightUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AIInsightPayload>[];
+                };
+                upsert: {
+                    args: Prisma.AIInsightUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$AIInsightPayload>;
+                };
+                aggregate: {
+                    args: Prisma.AIInsightAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateAIInsight>;
+                };
+                groupBy: {
+                    args: Prisma.AIInsightGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AIInsightGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.AIInsightCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AIInsightCountAggregateOutputType> | number;
+                };
+            };
+        };
     };
 } & {
     other: {
@@ -910,22 +985,10 @@ export declare const UserScalarFieldEnum: {
     readonly authProviderId: "authProviderId";
     readonly nickname: "nickname";
     readonly avatar: "avatar";
-    readonly birthDate: "birthDate";
-    readonly zodiacSign: "zodiacSign";
-    readonly age: "age";
-    readonly language: "language";
-    readonly country: "country";
-    readonly description: "description";
-    readonly showAge: "showAge";
-    readonly showZodiac: "showZodiac";
-    readonly showBirthday: "showBirthday";
-    readonly showLocation: "showLocation";
     readonly currentRoomId: "currentRoomId";
     readonly connectionPartnerId: "connectionPartnerId";
     readonly isRoomLead: "isRoomLead";
     readonly lastActiveAt: "lastActiveAt";
-    readonly statusEmoji: "statusEmoji";
-    readonly statusMessage: "statusMessage";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
 };
@@ -992,6 +1055,7 @@ export declare const SubscriptionScalarFieldEnum: {
     readonly referralCode: "referralCode";
     readonly referralCount: "referralCount";
     readonly referralExtensionDays: "referralExtensionDays";
+    readonly referralGeneratedAt: "referralGeneratedAt";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
 };
@@ -1003,9 +1067,22 @@ export declare const MilestoneScalarFieldEnum: {
     readonly milestoneTitle: "milestoneTitle";
     readonly description: "description";
     readonly aiGeneratedPoem: "aiGeneratedPoem";
+    readonly chatSessionId: "chatSessionId";
+    readonly leadConsentToShare: "leadConsentToShare";
+    readonly followerConsentToShare: "followerConsentToShare";
     readonly awardedAt: "awardedAt";
 };
 export type MilestoneScalarFieldEnum = (typeof MilestoneScalarFieldEnum)[keyof typeof MilestoneScalarFieldEnum];
+export declare const AIInsightScalarFieldEnum: {
+    readonly id: "id";
+    readonly roomId: "roomId";
+    readonly relationshipMetrics: "relationshipMetrics";
+    readonly interestMetrics: "interestMetrics";
+    readonly sparkMetrics: "sparkMetrics";
+    readonly summaryText: "summaryText";
+    readonly generatedAt: "generatedAt";
+};
+export type AIInsightScalarFieldEnum = (typeof AIInsightScalarFieldEnum)[keyof typeof AIInsightScalarFieldEnum];
 export declare const SortOrder: {
     readonly asc: "asc";
     readonly desc: "desc";
@@ -1026,6 +1103,15 @@ export declare const NullableJsonNullValueInput: {
     };
 };
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput];
+export declare const JsonNullValueInput: {
+    readonly JsonNull: {
+        "__#private@#private": any;
+        _getNamespace(): string;
+        _getName(): string;
+        toString(): string;
+    };
+};
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput];
 export declare const QueryMode: {
     readonly default: "default";
     readonly insensitive: "insensitive";
@@ -1077,6 +1163,10 @@ export type EnumAuthProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
  */
 export type ListEnumAuthProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AuthProvider[]'>;
 /**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>;
+/**
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>;
@@ -1084,18 +1174,6 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>;
-/**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>;
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>;
-/**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>;
 /**
  * Reference to a field of type 'RoomStatus'
  */
@@ -1128,6 +1206,14 @@ export type EnumSubscriptionStatusFieldRefInput<$PrismaModel> = FieldRefInputTyp
  * Reference to a field of type 'SubscriptionStatus[]'
  */
 export type ListEnumSubscriptionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubscriptionStatus[]'>;
+/**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>;
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>;
 /**
  * Reference to a field of type 'MilestoneType'
  */
@@ -1236,6 +1322,7 @@ export type GlobalOmitConfig = {
     message?: Prisma.MessageOmit;
     subscription?: Prisma.SubscriptionOmit;
     milestone?: Prisma.MilestoneOmit;
+    aIInsight?: Prisma.AIInsightOmit;
 };
 export type LogLevel = 'info' | 'query' | 'warn' | 'error';
 export type LogDefinition = {

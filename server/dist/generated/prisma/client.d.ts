@@ -59,4 +59,9 @@ export type Subscription = Prisma.SubscriptionModel;
  *
  */
 export type Milestone = Prisma.MilestoneModel;
+/**
+ * Model AIInsight
+ *
+ */
+export type AIInsight = Prisma.AIInsightModel;
 //# sourceMappingURL=client.d.ts.map

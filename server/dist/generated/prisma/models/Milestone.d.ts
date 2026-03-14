@@ -18,6 +18,9 @@ export type MilestoneMinAggregateOutputType = {
     milestoneTitle: string | null;
     description: string | null;
     aiGeneratedPoem: string | null;
+    chatSessionId: string | null;
+    leadConsentToShare: boolean | null;
+    followerConsentToShare: boolean | null;
     awardedAt: Date | null;
 };
 export type MilestoneMaxAggregateOutputType = {
@@ -27,6 +30,9 @@ export type MilestoneMaxAggregateOutputType = {
     milestoneTitle: string | null;
     description: string | null;
     aiGeneratedPoem: string | null;
+    chatSessionId: string | null;
+    leadConsentToShare: boolean | null;
+    followerConsentToShare: boolean | null;
     awardedAt: Date | null;
 };
 export type MilestoneCountAggregateOutputType = {
@@ -36,6 +42,9 @@ export type MilestoneCountAggregateOutputType = {
     milestoneTitle: number;
     description: number;
     aiGeneratedPoem: number;
+    chatSessionId: number;
+    leadConsentToShare: number;
+    followerConsentToShare: number;
     awardedAt: number;
     _all: number;
 };
@@ -46,6 +55,9 @@ export type MilestoneMinAggregateInputType = {
     milestoneTitle?: true;
     description?: true;
     aiGeneratedPoem?: true;
+    chatSessionId?: true;
+    leadConsentToShare?: true;
+    followerConsentToShare?: true;
     awardedAt?: true;
 };
 export type MilestoneMaxAggregateInputType = {
@@ -55,6 +67,9 @@ export type MilestoneMaxAggregateInputType = {
     milestoneTitle?: true;
     description?: true;
     aiGeneratedPoem?: true;
+    chatSessionId?: true;
+    leadConsentToShare?: true;
+    followerConsentToShare?: true;
     awardedAt?: true;
 };
 export type MilestoneCountAggregateInputType = {
@@ -64,6 +79,9 @@ export type MilestoneCountAggregateInputType = {
     milestoneTitle?: true;
     description?: true;
     aiGeneratedPoem?: true;
+    chatSessionId?: true;
+    leadConsentToShare?: true;
+    followerConsentToShare?: true;
     awardedAt?: true;
     _all?: true;
 };
@@ -136,6 +154,9 @@ export type MilestoneGroupByOutputType = {
     milestoneTitle: string;
     description: string | null;
     aiGeneratedPoem: string | null;
+    chatSessionId: string | null;
+    leadConsentToShare: boolean;
+    followerConsentToShare: boolean;
     awardedAt: Date;
     _count: MilestoneCountAggregateOutputType | null;
     _min: MilestoneMinAggregateOutputType | null;
@@ -154,8 +175,12 @@ export type MilestoneWhereInput = {
     milestoneTitle?: Prisma.StringFilter<"Milestone"> | string;
     description?: Prisma.StringNullableFilter<"Milestone"> | string | null;
     aiGeneratedPoem?: Prisma.StringNullableFilter<"Milestone"> | string | null;
+    chatSessionId?: Prisma.StringNullableFilter<"Milestone"> | string | null;
+    leadConsentToShare?: Prisma.BoolFilter<"Milestone"> | boolean;
+    followerConsentToShare?: Prisma.BoolFilter<"Milestone"> | boolean;
     awardedAt?: Prisma.DateTimeFilter<"Milestone"> | Date | string;
     room?: Prisma.XOR<Prisma.RoomScalarRelationFilter, Prisma.RoomWhereInput>;
+    chatSession?: Prisma.XOR<Prisma.ChatSessionNullableScalarRelationFilter, Prisma.ChatSessionWhereInput> | null;
 };
 export type MilestoneOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -164,11 +189,16 @@ export type MilestoneOrderByWithRelationInput = {
     milestoneTitle?: Prisma.SortOrder;
     description?: Prisma.SortOrderInput | Prisma.SortOrder;
     aiGeneratedPoem?: Prisma.SortOrderInput | Prisma.SortOrder;
+    chatSessionId?: Prisma.SortOrderInput | Prisma.SortOrder;
+    leadConsentToShare?: Prisma.SortOrder;
+    followerConsentToShare?: Prisma.SortOrder;
     awardedAt?: Prisma.SortOrder;
     room?: Prisma.RoomOrderByWithRelationInput;
+    chatSession?: Prisma.ChatSessionOrderByWithRelationInput;
 };
 export type MilestoneWhereUniqueInput = Prisma.AtLeast<{
     id?: string;
+    chatSessionId?: string;
     AND?: Prisma.MilestoneWhereInput | Prisma.MilestoneWhereInput[];
     OR?: Prisma.MilestoneWhereInput[];
     NOT?: Prisma.MilestoneWhereInput | Prisma.MilestoneWhereInput[];
@@ -177,9 +207,12 @@ export type MilestoneWhereUniqueInput = Prisma.AtLeast<{
     milestoneTitle?: Prisma.StringFilter<"Milestone"> | string;
     description?: Prisma.StringNullableFilter<"Milestone"> | string | null;
     aiGeneratedPoem?: Prisma.StringNullableFilter<"Milestone"> | string | null;
+    leadConsentToShare?: Prisma.BoolFilter<"Milestone"> | boolean;
+    followerConsentToShare?: Prisma.BoolFilter<"Milestone"> | boolean;
     awardedAt?: Prisma.DateTimeFilter<"Milestone"> | Date | string;
     room?: Prisma.XOR<Prisma.RoomScalarRelationFilter, Prisma.RoomWhereInput>;
-}, "id">;
+    chatSession?: Prisma.XOR<Prisma.ChatSessionNullableScalarRelationFilter, Prisma.ChatSessionWhereInput> | null;
+}, "id" | "chatSessionId">;
 export type MilestoneOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
     roomId?: Prisma.SortOrder;
@@ -187,6 +220,9 @@ export type MilestoneOrderByWithAggregationInput = {
     milestoneTitle?: Prisma.SortOrder;
     description?: Prisma.SortOrderInput | Prisma.SortOrder;
     aiGeneratedPoem?: Prisma.SortOrderInput | Prisma.SortOrder;
+    chatSessionId?: Prisma.SortOrderInput | Prisma.SortOrder;
+    leadConsentToShare?: Prisma.SortOrder;
+    followerConsentToShare?: Prisma.SortOrder;
     awardedAt?: Prisma.SortOrder;
     _count?: Prisma.MilestoneCountOrderByAggregateInput;
     _max?: Prisma.MilestoneMaxOrderByAggregateInput;
@@ -202,6 +238,9 @@ export type MilestoneScalarWhereWithAggregatesInput = {
     milestoneTitle?: Prisma.StringWithAggregatesFilter<"Milestone"> | string;
     description?: Prisma.StringNullableWithAggregatesFilter<"Milestone"> | string | null;
     aiGeneratedPoem?: Prisma.StringNullableWithAggregatesFilter<"Milestone"> | string | null;
+    chatSessionId?: Prisma.StringNullableWithAggregatesFilter<"Milestone"> | string | null;
+    leadConsentToShare?: Prisma.BoolWithAggregatesFilter<"Milestone"> | boolean;
+    followerConsentToShare?: Prisma.BoolWithAggregatesFilter<"Milestone"> | boolean;
     awardedAt?: Prisma.DateTimeWithAggregatesFilter<"Milestone"> | Date | string;
 };
 export type MilestoneCreateInput = {
@@ -210,8 +249,11 @@ export type MilestoneCreateInput = {
     milestoneTitle: string;
     description?: string | null;
     aiGeneratedPoem?: string | null;
+    leadConsentToShare?: boolean;
+    followerConsentToShare?: boolean;
     awardedAt?: Date | string;
     room: Prisma.RoomCreateNestedOneWithoutMilestonesInput;
+    chatSession?: Prisma.ChatSessionCreateNestedOneWithoutMilestoneInput;
 };
 export type MilestoneUncheckedCreateInput = {
     id?: string;
@@ -220,6 +262,9 @@ export type MilestoneUncheckedCreateInput = {
     milestoneTitle: string;
     description?: string | null;
     aiGeneratedPoem?: string | null;
+    chatSessionId?: string | null;
+    leadConsentToShare?: boolean;
+    followerConsentToShare?: boolean;
     awardedAt?: Date | string;
 };
 export type MilestoneUpdateInput = {
@@ -228,8 +273,11 @@ export type MilestoneUpdateInput = {
     milestoneTitle?: Prisma.StringFieldUpdateOperationsInput | string;
     description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     aiGeneratedPoem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    leadConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    followerConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     awardedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     room?: Prisma.RoomUpdateOneRequiredWithoutMilestonesNestedInput;
+    chatSession?: Prisma.ChatSessionUpdateOneWithoutMilestoneNestedInput;
 };
 export type MilestoneUncheckedUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -238,6 +286,9 @@ export type MilestoneUncheckedUpdateInput = {
     milestoneTitle?: Prisma.StringFieldUpdateOperationsInput | string;
     description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     aiGeneratedPoem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    chatSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    leadConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    followerConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     awardedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 export type MilestoneCreateManyInput = {
@@ -247,6 +298,9 @@ export type MilestoneCreateManyInput = {
     milestoneTitle: string;
     description?: string | null;
     aiGeneratedPoem?: string | null;
+    chatSessionId?: string | null;
+    leadConsentToShare?: boolean;
+    followerConsentToShare?: boolean;
     awardedAt?: Date | string;
 };
 export type MilestoneUpdateManyMutationInput = {
@@ -255,6 +309,8 @@ export type MilestoneUpdateManyMutationInput = {
     milestoneTitle?: Prisma.StringFieldUpdateOperationsInput | string;
     description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     aiGeneratedPoem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    leadConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    followerConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     awardedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 export type MilestoneUncheckedUpdateManyInput = {
@@ -264,6 +320,9 @@ export type MilestoneUncheckedUpdateManyInput = {
     milestoneTitle?: Prisma.StringFieldUpdateOperationsInput | string;
     description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     aiGeneratedPoem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    chatSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    leadConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    followerConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     awardedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 export type MilestoneListRelationFilter = {
@@ -274,6 +333,10 @@ export type MilestoneListRelationFilter = {
 export type MilestoneOrderByRelationAggregateInput = {
     _count?: Prisma.SortOrder;
 };
+export type MilestoneNullableScalarRelationFilter = {
+    is?: Prisma.MilestoneWhereInput | null;
+    isNot?: Prisma.MilestoneWhereInput | null;
+};
 export type MilestoneCountOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     roomId?: Prisma.SortOrder;
@@ -281,6 +344,9 @@ export type MilestoneCountOrderByAggregateInput = {
     milestoneTitle?: Prisma.SortOrder;
     description?: Prisma.SortOrder;
     aiGeneratedPoem?: Prisma.SortOrder;
+    chatSessionId?: Prisma.SortOrder;
+    leadConsentToShare?: Prisma.SortOrder;
+    followerConsentToShare?: Prisma.SortOrder;
     awardedAt?: Prisma.SortOrder;
 };
 export type MilestoneMaxOrderByAggregateInput = {
@@ -290,6 +356,9 @@ export type MilestoneMaxOrderByAggregateInput = {
     milestoneTitle?: Prisma.SortOrder;
     description?: Prisma.SortOrder;
     aiGeneratedPoem?: Prisma.SortOrder;
+    chatSessionId?: Prisma.SortOrder;
+    leadConsentToShare?: Prisma.SortOrder;
+    followerConsentToShare?: Prisma.SortOrder;
     awardedAt?: Prisma.SortOrder;
 };
 export type MilestoneMinOrderByAggregateInput = {
@@ -299,6 +368,9 @@ export type MilestoneMinOrderByAggregateInput = {
     milestoneTitle?: Prisma.SortOrder;
     description?: Prisma.SortOrder;
     aiGeneratedPoem?: Prisma.SortOrder;
+    chatSessionId?: Prisma.SortOrder;
+    leadConsentToShare?: Prisma.SortOrder;
+    followerConsentToShare?: Prisma.SortOrder;
     awardedAt?: Prisma.SortOrder;
 };
 export type MilestoneCreateNestedManyWithoutRoomInput = {
@@ -339,6 +411,34 @@ export type MilestoneUncheckedUpdateManyWithoutRoomNestedInput = {
     updateMany?: Prisma.MilestoneUpdateManyWithWhereWithoutRoomInput | Prisma.MilestoneUpdateManyWithWhereWithoutRoomInput[];
     deleteMany?: Prisma.MilestoneScalarWhereInput | Prisma.MilestoneScalarWhereInput[];
 };
+export type MilestoneCreateNestedOneWithoutChatSessionInput = {
+    create?: Prisma.XOR<Prisma.MilestoneCreateWithoutChatSessionInput, Prisma.MilestoneUncheckedCreateWithoutChatSessionInput>;
+    connectOrCreate?: Prisma.MilestoneCreateOrConnectWithoutChatSessionInput;
+    connect?: Prisma.MilestoneWhereUniqueInput;
+};
+export type MilestoneUncheckedCreateNestedOneWithoutChatSessionInput = {
+    create?: Prisma.XOR<Prisma.MilestoneCreateWithoutChatSessionInput, Prisma.MilestoneUncheckedCreateWithoutChatSessionInput>;
+    connectOrCreate?: Prisma.MilestoneCreateOrConnectWithoutChatSessionInput;
+    connect?: Prisma.MilestoneWhereUniqueInput;
+};
+export type MilestoneUpdateOneWithoutChatSessionNestedInput = {
+    create?: Prisma.XOR<Prisma.MilestoneCreateWithoutChatSessionInput, Prisma.MilestoneUncheckedCreateWithoutChatSessionInput>;
+    connectOrCreate?: Prisma.MilestoneCreateOrConnectWithoutChatSessionInput;
+    upsert?: Prisma.MilestoneUpsertWithoutChatSessionInput;
+    disconnect?: Prisma.MilestoneWhereInput | boolean;
+    delete?: Prisma.MilestoneWhereInput | boolean;
+    connect?: Prisma.MilestoneWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.MilestoneUpdateToOneWithWhereWithoutChatSessionInput, Prisma.MilestoneUpdateWithoutChatSessionInput>, Prisma.MilestoneUncheckedUpdateWithoutChatSessionInput>;
+};
+export type MilestoneUncheckedUpdateOneWithoutChatSessionNestedInput = {
+    create?: Prisma.XOR<Prisma.MilestoneCreateWithoutChatSessionInput, Prisma.MilestoneUncheckedCreateWithoutChatSessionInput>;
+    connectOrCreate?: Prisma.MilestoneCreateOrConnectWithoutChatSessionInput;
+    upsert?: Prisma.MilestoneUpsertWithoutChatSessionInput;
+    disconnect?: Prisma.MilestoneWhereInput | boolean;
+    delete?: Prisma.MilestoneWhereInput | boolean;
+    connect?: Prisma.MilestoneWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.MilestoneUpdateToOneWithWhereWithoutChatSessionInput, Prisma.MilestoneUpdateWithoutChatSessionInput>, Prisma.MilestoneUncheckedUpdateWithoutChatSessionInput>;
+};
 export type EnumMilestoneTypeFieldUpdateOperationsInput = {
     set?: $Enums.MilestoneType;
 };
@@ -348,7 +448,10 @@ export type MilestoneCreateWithoutRoomInput = {
     milestoneTitle: string;
     description?: string | null;
     aiGeneratedPoem?: string | null;
+    leadConsentToShare?: boolean;
+    followerConsentToShare?: boolean;
     awardedAt?: Date | string;
+    chatSession?: Prisma.ChatSessionCreateNestedOneWithoutMilestoneInput;
 };
 export type MilestoneUncheckedCreateWithoutRoomInput = {
     id?: string;
@@ -356,6 +459,9 @@ export type MilestoneUncheckedCreateWithoutRoomInput = {
     milestoneTitle: string;
     description?: string | null;
     aiGeneratedPoem?: string | null;
+    chatSessionId?: string | null;
+    leadConsentToShare?: boolean;
+    followerConsentToShare?: boolean;
     awardedAt?: Date | string;
 };
 export type MilestoneCreateOrConnectWithoutRoomInput = {
@@ -389,7 +495,67 @@ export type MilestoneScalarWhereInput = {
     milestoneTitle?: Prisma.StringFilter<"Milestone"> | string;
     description?: Prisma.StringNullableFilter<"Milestone"> | string | null;
     aiGeneratedPoem?: Prisma.StringNullableFilter<"Milestone"> | string | null;
+    chatSessionId?: Prisma.StringNullableFilter<"Milestone"> | string | null;
+    leadConsentToShare?: Prisma.BoolFilter<"Milestone"> | boolean;
+    followerConsentToShare?: Prisma.BoolFilter<"Milestone"> | boolean;
     awardedAt?: Prisma.DateTimeFilter<"Milestone"> | Date | string;
+};
+export type MilestoneCreateWithoutChatSessionInput = {
+    id?: string;
+    type: $Enums.MilestoneType;
+    milestoneTitle: string;
+    description?: string | null;
+    aiGeneratedPoem?: string | null;
+    leadConsentToShare?: boolean;
+    followerConsentToShare?: boolean;
+    awardedAt?: Date | string;
+    room: Prisma.RoomCreateNestedOneWithoutMilestonesInput;
+};
+export type MilestoneUncheckedCreateWithoutChatSessionInput = {
+    id?: string;
+    roomId: string;
+    type: $Enums.MilestoneType;
+    milestoneTitle: string;
+    description?: string | null;
+    aiGeneratedPoem?: string | null;
+    leadConsentToShare?: boolean;
+    followerConsentToShare?: boolean;
+    awardedAt?: Date | string;
+};
+export type MilestoneCreateOrConnectWithoutChatSessionInput = {
+    where: Prisma.MilestoneWhereUniqueInput;
+    create: Prisma.XOR<Prisma.MilestoneCreateWithoutChatSessionInput, Prisma.MilestoneUncheckedCreateWithoutChatSessionInput>;
+};
+export type MilestoneUpsertWithoutChatSessionInput = {
+    update: Prisma.XOR<Prisma.MilestoneUpdateWithoutChatSessionInput, Prisma.MilestoneUncheckedUpdateWithoutChatSessionInput>;
+    create: Prisma.XOR<Prisma.MilestoneCreateWithoutChatSessionInput, Prisma.MilestoneUncheckedCreateWithoutChatSessionInput>;
+    where?: Prisma.MilestoneWhereInput;
+};
+export type MilestoneUpdateToOneWithWhereWithoutChatSessionInput = {
+    where?: Prisma.MilestoneWhereInput;
+    data: Prisma.XOR<Prisma.MilestoneUpdateWithoutChatSessionInput, Prisma.MilestoneUncheckedUpdateWithoutChatSessionInput>;
+};
+export type MilestoneUpdateWithoutChatSessionInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    type?: Prisma.EnumMilestoneTypeFieldUpdateOperationsInput | $Enums.MilestoneType;
+    milestoneTitle?: Prisma.StringFieldUpdateOperationsInput | string;
+    description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    aiGeneratedPoem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    leadConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    followerConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    awardedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    room?: Prisma.RoomUpdateOneRequiredWithoutMilestonesNestedInput;
+};
+export type MilestoneUncheckedUpdateWithoutChatSessionInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    roomId?: Prisma.StringFieldUpdateOperationsInput | string;
+    type?: Prisma.EnumMilestoneTypeFieldUpdateOperationsInput | $Enums.MilestoneType;
+    milestoneTitle?: Prisma.StringFieldUpdateOperationsInput | string;
+    description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    aiGeneratedPoem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    leadConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    followerConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    awardedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 export type MilestoneCreateManyRoomInput = {
     id?: string;
@@ -397,6 +563,9 @@ export type MilestoneCreateManyRoomInput = {
     milestoneTitle: string;
     description?: string | null;
     aiGeneratedPoem?: string | null;
+    chatSessionId?: string | null;
+    leadConsentToShare?: boolean;
+    followerConsentToShare?: boolean;
     awardedAt?: Date | string;
 };
 export type MilestoneUpdateWithoutRoomInput = {
@@ -405,7 +574,10 @@ export type MilestoneUpdateWithoutRoomInput = {
     milestoneTitle?: Prisma.StringFieldUpdateOperationsInput | string;
     description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     aiGeneratedPoem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    leadConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    followerConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     awardedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    chatSession?: Prisma.ChatSessionUpdateOneWithoutMilestoneNestedInput;
 };
 export type MilestoneUncheckedUpdateWithoutRoomInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -413,6 +585,9 @@ export type MilestoneUncheckedUpdateWithoutRoomInput = {
     milestoneTitle?: Prisma.StringFieldUpdateOperationsInput | string;
     description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     aiGeneratedPoem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    chatSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    leadConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    followerConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     awardedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 export type MilestoneUncheckedUpdateManyWithoutRoomInput = {
@@ -421,6 +596,9 @@ export type MilestoneUncheckedUpdateManyWithoutRoomInput = {
     milestoneTitle?: Prisma.StringFieldUpdateOperationsInput | string;
     description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     aiGeneratedPoem?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    chatSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    leadConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    followerConsentToShare?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     awardedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 export type MilestoneSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -430,8 +608,12 @@ export type MilestoneSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
     milestoneTitle?: boolean;
     description?: boolean;
     aiGeneratedPoem?: boolean;
+    chatSessionId?: boolean;
+    leadConsentToShare?: boolean;
+    followerConsentToShare?: boolean;
     awardedAt?: boolean;
     room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>;
+    chatSession?: boolean | Prisma.Milestone$chatSessionArgs<ExtArgs>;
 }, ExtArgs["result"]["milestone"]>;
 export type MilestoneSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -440,8 +622,12 @@ export type MilestoneSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
     milestoneTitle?: boolean;
     description?: boolean;
     aiGeneratedPoem?: boolean;
+    chatSessionId?: boolean;
+    leadConsentToShare?: boolean;
+    followerConsentToShare?: boolean;
     awardedAt?: boolean;
     room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>;
+    chatSession?: boolean | Prisma.Milestone$chatSessionArgs<ExtArgs>;
 }, ExtArgs["result"]["milestone"]>;
 export type MilestoneSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -450,8 +636,12 @@ export type MilestoneSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
     milestoneTitle?: boolean;
     description?: boolean;
     aiGeneratedPoem?: boolean;
+    chatSessionId?: boolean;
+    leadConsentToShare?: boolean;
+    followerConsentToShare?: boolean;
     awardedAt?: boolean;
     room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>;
+    chatSession?: boolean | Prisma.Milestone$chatSessionArgs<ExtArgs>;
 }, ExtArgs["result"]["milestone"]>;
 export type MilestoneSelectScalar = {
     id?: boolean;
@@ -460,22 +650,29 @@ export type MilestoneSelectScalar = {
     milestoneTitle?: boolean;
     description?: boolean;
     aiGeneratedPoem?: boolean;
+    chatSessionId?: boolean;
+    leadConsentToShare?: boolean;
+    followerConsentToShare?: boolean;
     awardedAt?: boolean;
 };
-export type MilestoneOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "roomId" | "type" | "milestoneTitle" | "description" | "aiGeneratedPoem" | "awardedAt", ExtArgs["result"]["milestone"]>;
+export type MilestoneOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "roomId" | "type" | "milestoneTitle" | "description" | "aiGeneratedPoem" | "chatSessionId" | "leadConsentToShare" | "followerConsentToShare" | "awardedAt", ExtArgs["result"]["milestone"]>;
 export type MilestoneInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>;
+    chatSession?: boolean | Prisma.Milestone$chatSessionArgs<ExtArgs>;
 };
 export type MilestoneIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>;
+    chatSession?: boolean | Prisma.Milestone$chatSessionArgs<ExtArgs>;
 };
 export type MilestoneIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>;
+    chatSession?: boolean | Prisma.Milestone$chatSessionArgs<ExtArgs>;
 };
 export type $MilestonePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "Milestone";
     objects: {
         room: Prisma.$RoomPayload<ExtArgs>;
+        chatSession: Prisma.$ChatSessionPayload<ExtArgs> | null;
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: string;
@@ -484,6 +681,9 @@ export type $MilestonePayload<ExtArgs extends runtime.Types.Extensions.InternalA
         milestoneTitle: string;
         description: string | null;
         aiGeneratedPoem: string | null;
+        chatSessionId: string | null;
+        leadConsentToShare: boolean;
+        followerConsentToShare: boolean;
         awardedAt: Date;
     }, ExtArgs["result"]["milestone"]>;
     composites: {};
@@ -815,6 +1015,7 @@ export interface MilestoneDelegate<ExtArgs extends runtime.Types.Extensions.Inte
 export interface Prisma__MilestoneClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
     room<T extends Prisma.RoomDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RoomDefaultArgs<ExtArgs>>): Prisma.Prisma__RoomClient<runtime.Types.Result.GetResult<Prisma.$RoomPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
+    chatSession<T extends Prisma.Milestone$chatSessionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Milestone$chatSessionArgs<ExtArgs>>): Prisma.Prisma__ChatSessionClient<runtime.Types.Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -846,6 +1047,9 @@ export interface MilestoneFieldRefs {
     readonly milestoneTitle: Prisma.FieldRef<"Milestone", 'String'>;
     readonly description: Prisma.FieldRef<"Milestone", 'String'>;
     readonly aiGeneratedPoem: Prisma.FieldRef<"Milestone", 'String'>;
+    readonly chatSessionId: Prisma.FieldRef<"Milestone", 'String'>;
+    readonly leadConsentToShare: Prisma.FieldRef<"Milestone", 'Boolean'>;
+    readonly followerConsentToShare: Prisma.FieldRef<"Milestone", 'Boolean'>;
     readonly awardedAt: Prisma.FieldRef<"Milestone", 'DateTime'>;
 }
 /**
@@ -1224,6 +1428,24 @@ export type MilestoneDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
      * Limit how many Milestones to delete.
      */
     limit?: number;
+};
+/**
+ * Milestone.chatSession
+ */
+export type Milestone$chatSessionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatSession
+     */
+    select?: Prisma.ChatSessionSelect<ExtArgs> | null;
+    /**
+     * Omit specific fields from the ChatSession
+     */
+    omit?: Prisma.ChatSessionOmit<ExtArgs> | null;
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: Prisma.ChatSessionInclude<ExtArgs> | null;
+    where?: Prisma.ChatSessionWhereInput;
 };
 /**
  * Milestone without action

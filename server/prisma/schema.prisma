@@ -31,50 +31,36 @@ model User {
   email                 String    @unique
   authProvider          AuthProvider
   authProviderId        String?   @unique
-  
-  // Profile Info
+
+  // Public identity (used for room invitations and chat display)
   nickname              String?
-  avatar                String?   // URL to avatar image
-  birthDate             DateTime?
-  zodiacSign            String?
-  age                   Int?
-  language              String?   @default("en")
-  country               String?
-  description           String?
-  
-  // Privacy Settings
-  showAge               Boolean   @default(true)
-  showZodiac            Boolean   @default(true)
-  showBirthday          Boolean   @default(false)
-  showLocation          Boolean   @default(true)
-  
+  avatar                String?
+
   // Room & Connection
   currentRoom           Room?     @relation("UserRoom", fields: [currentRoomId], references: [id], onDelete: SetNull)
   currentRoomId         String?   @unique
   connectionPartner     User?     @relation("UserConnections", fields: [connectionPartnerId], references: [id], onDelete: SetNull)
   connectionPartnerId   String?   @unique
   partnerConnection     User?     @relation("UserConnections")
-  
+
   isRoomLead            Boolean   @default(false)
-  
+
   // Room Membership
   roomMemberships       RoomMember[]
-  
+
   // Chat
   sentMessages          Message[] @relation("SenderMessages")
-  
+
   // Subscription
   subscription          Subscription?
-  
+
   // Tracking
   lastActiveAt          DateTime  @default(now())
-  statusEmoji           String?   @default("😊")
-  statusMessage         String?   @db.VarChar(50)
-  
+
   // Timestamps
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
-  
+
   @@index([email])
   @@index([currentRoomId])
   @@index([connectionPartnerId])
@@ -101,7 +87,8 @@ model Room {
   milestones            Milestone[]
   
   chatSessions          ChatSession[]
-  
+  insights              AIInsight[]
+
   // Tracking
   createdAt             DateTime  @default(now())
   roomStartedAt         DateTime? // When both users connected
@@ -149,19 +136,22 @@ model ChatSession {
   id                    String    @id @default(cuid())
   room                  Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
   roomId                String
-  
+
   gameType              String?   // e.g., "love_map_builder", "this_or_that"
   title                 String    @default("Chat")
-  
+
   messages              Message[]
-  
+
+  // Milestone back-link
+  milestone             Milestone? @relation("MilestoneChat")
+
   // Game Results
   results               Json?     // Flexible JSON for game results
-  
+
   lastMessageAt         DateTime?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
-  
+
   @@index([roomId])
   @@index([lastMessageAt])
 }
@@ -213,11 +203,12 @@ model Subscription {
   trialStartDate        DateTime?
   trialEndDate          DateTime?
   
-  // Referrals
+  // Referrals (max 3, each qualifying referral = +30 days room extension)
   referralCode          String    @unique @default(cuid())
   referralCount         Int       @default(0)
-  referralExtensionDays Int       @default(0) // Additional days from referrals
-  
+  referralExtensionDays Int       @default(0)
+  referralGeneratedAt   DateTime  @default(now()) // When current link was last generated
+
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
   
@@ -238,14 +229,40 @@ model Milestone {
   id                    String    @id @default(cuid())
   room                  Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
   roomId                String
-  
+
   type                  MilestoneType
   milestoneTitle        String
   description           String?
-  
+
   aiGeneratedPoem       String?
-  
+
+  // Linked chat session for discussing this milestone
+  chatSession           ChatSession? @relation("MilestoneChat", fields: [chatSessionId], references: [id], onDelete: SetNull)
+  chatSessionId         String?   @unique
+
+  // Share consent (lead and follower must both agree before sharing)
+  leadConsentToShare    Boolean   @default(false)
+  followerConsentToShare Boolean  @default(false)
+
   awardedAt             DateTime  @default(now())
-  
+
   @@index([roomId])
+}
+
+// ============ AI INSIGHTS ============
+
+model AIInsight {
+  id                    String    @id @default(cuid())
+  room                  Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId                String
+
+  relationshipMetrics   Json      // RelationshipMetrics
+  interestMetrics       Json      // InterestMetrics
+  sparkMetrics          Json      // SparkMetrics
+  summaryText           String    @db.Text
+
+  generatedAt           DateTime  @default(now())
+
+  @@index([roomId])
+  @@index([generatedAt])
 }

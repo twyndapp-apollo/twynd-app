@@ -199,6 +199,17 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
     get milestone(): Prisma.MilestoneDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
+    /**
+     * `prisma.aIInsight`: Exposes CRUD operations for the **AIInsight** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more AIInsights
+      * const aIInsights = await prisma.aIInsight.findMany()
+      * ```
+      */
+    get aIInsight(): Prisma.AIInsightDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
 }
 export declare function getPrismaClientClass(dirname: string): PrismaClientConstructor;
 //# sourceMappingURL=class.d.ts.map

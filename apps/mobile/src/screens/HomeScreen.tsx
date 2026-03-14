@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,9 +6,14 @@ import {
   TouchableOpacity,
   ScrollView,
   FlatList,
+  Platform,
 } from 'react-native';
+import * as ScreenCapture from 'expo-screen-capture';
 import { useUser } from '../context/UserContext';
 import { GAME_CONFIG, REACTIONS } from '@twynd/shared/constants';
+import { VibesScreen } from './VibesScreen';
+import { UsScreen } from './UsScreen';
+import { SettingsScreen } from './SettingsScreen';
 
 interface ChatSession {
   id: string;
@@ -18,10 +23,69 @@ interface ChatSession {
   timestamp: Date;
 }
 
-export const HomeScreen: React.FC = () => {
-  const { user } = useUser();
+type ActiveView = 'home' | 'vibes' | 'us' | 'settings';
+
+interface HomeScreenProps {
+  initialView?: ActiveView;
+}
+
+export const HomeScreen: React.FC<HomeScreenProps> = ({ initialView }) => {
+  const { user, setCurrentRoomId, logout } = useUser();
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeView, setActiveView] = useState<ActiveView>(initialView ?? 'home');
+
+  const navigateTo = (view: ActiveView) => {
+    setMenuOpen(false);
+    setActiveView(view);
+  };
+
+  // Prevent screenshots while in a room (always active, non-toggleable)
+  useEffect(() => {
+    ScreenCapture.preventScreenCaptureAsync();
+    return () => { ScreenCapture.allowScreenCaptureAsync(); };
+  }, []);
+
+  const handleOpenChat = (chatSessionId: string) => {
+    // Add or surface the milestone chat session in the list
+    const exists = chatSessions.find((s) => s.id === chatSessionId);
+    if (!exists) {
+      const newSession: ChatSession = {
+        id: chatSessionId,
+        title: 'Milestone Chat',
+        unreadCount: 0,
+        timestamp: new Date(),
+      };
+      setChatSessions((prev) => [newSession, ...prev]);
+    }
+    setActiveView('home');
+  };
+
+  // Render Vibes screen when active
+  if (activeView === 'vibes') {
+    return (
+      <VibesScreen
+        onBack={() => setActiveView('home')}
+        onOpenChat={handleOpenChat}
+      />
+    );
+  }
+
+  // Render Us screen when active
+  if (activeView === 'us') {
+    return <UsScreen onBack={() => setActiveView('home')} />;
+  }
+
+  // Render Settings screen when active
+  if (activeView === 'settings') {
+    return (
+      <SettingsScreen
+        onBack={() => setActiveView('home')}
+        onLeaveRoom={() => setCurrentRoomId(null)}
+        onDeleteAccount={() => logout()}
+      />
+    );
+  }
 
   const handleStartGame = (gameType: string) => {
     // Create new chat session with game
@@ -144,22 +208,22 @@ export const HomeScreen: React.FC = () => {
       {/* Hamburger Menu Drawer */}
       {menuOpen && (
         <View style={styles.menuDrawer}>
+          {/* Fixed top: logo + nav items */}
           <View style={styles.menuHeader}>
             <Text style={styles.menuLogo}>Twynd</Text>
           </View>
 
-          {/* Menu Items */}
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('home')}>
             <Text style={styles.menuItemIcon}>✨</Text>
             <Text style={styles.menuItemText}>New</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('vibes')}>
             <Text style={styles.menuItemIcon}>💫</Text>
             <Text style={styles.menuItemText}>Vibes</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('us')}>
             <Text style={styles.menuItemIcon}>👥</Text>
             <Text style={styles.menuItemText}>Us</Text>
           </TouchableOpacity>
@@ -169,36 +233,37 @@ export const HomeScreen: React.FC = () => {
             <Text style={styles.menuItemText}>Affiliate Store</Text>
           </TouchableOpacity>
 
-          {/* Divider */}
           <View style={styles.menuDivider} />
 
-          {/* Chat Sessions in Menu */}
-          {chatSessions.length > 0 && (
-            <>
-              <Text style={styles.menuSectionTitle}>Chat Sessions</Text>
-              {chatSessions.map((session) => (
-                <TouchableOpacity
-                  key={session.id}
-                  style={styles.menuItem}
-                  onPress={() => handleChatSessionPress(session)}
-                >
-                  <Text style={styles.sessionIcon}>💬</Text>
-                  <Text style={styles.menuItemText} numberOfLines={1}>
-                    {session.title}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </>
-          )}
+          {/* Scrollable chat sessions */}
+          <ScrollView style={styles.menuScrollArea} showsVerticalScrollIndicator={false}>
+            {chatSessions.length > 0 && (
+              <>
+                <Text style={styles.menuSectionTitle}>Chat Sessions</Text>
+                {chatSessions.map((session) => (
+                  <TouchableOpacity
+                    key={session.id}
+                    style={styles.menuItem}
+                    onPress={() => handleChatSessionPress(session)}
+                  >
+                    <Text style={styles.sessionIcon}>💬</Text>
+                    <Text style={styles.menuItemText} numberOfLines={1}>
+                      {session.title}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </>
+            )}
+          </ScrollView>
 
-          {/* Divider */}
+          {/* Fixed bottom: settings */}
           <View style={styles.menuDivider} />
-
-          {/* Settings */}
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuItemIcon}>⚙️</Text>
-            <Text style={styles.menuItemText}>Settings</Text>
-          </TouchableOpacity>
+          <View style={styles.menuBottom}>
+            <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('settings')}>
+              <Text style={styles.menuItemIcon}>⚙️</Text>
+              <Text style={styles.menuItemText}>Settings</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
 
@@ -377,6 +442,13 @@ const styles = StyleSheet.create({
     borderRightColor: '#f0f0f0',
     paddingTop: 16,
     zIndex: 100,
+    flexDirection: 'column',
+  },
+  menuScrollArea: {
+    flex: 1,
+  },
+  menuBottom: {
+    paddingBottom: Platform.OS === 'android' ? 24 : 34,
   },
   menuHeader: {
     paddingHorizontal: 16,

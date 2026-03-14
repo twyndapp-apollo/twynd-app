@@ -215,6 +215,24 @@ export const STORAGE_KEYS = {
   ROOM_CODE: '@twynd_room_code',
   PREFERENCES: '@twynd_preferences',
   DRAFT_MESSAGES: '@twynd_draft_messages',
+  // Chat
+  CHAT_SESSIONS: '@twynd_chat_sessions',
+  CHAT_MESSAGES_PREFIX: '@twynd_messages_',   // + sessionId
+  // AI
+  AI_ANALYSIS: '@twynd_ai_analysis',
+  AI_ANALYSIS_DATE: '@twynd_ai_analysis_date',
+  AI_QUESTIONS_PREFIX: '@twynd_ai_questions_', // + gameId
+} as const;
+
+// ============ GAME QUESTION CATEGORIES ============
+export const GAME_CATEGORIES = {
+  BASIC: 'basic',
+  CONFLICT_RESOLUTION: 'conflict_resolution',
+  VALUES_ALIGNMENT: 'values_alignment',
+  AFFECTION_INTIMACY: 'affection_intimacy',
+  FINANCIAL_ROLES: 'financial_roles',
+  CHILDREN_PARENTING: 'children_parenting',
+  FAMILY_DYNAMICS: 'family_dynamics',
 } as const;
 
 // ============ PROFILE OPTIONS ============
