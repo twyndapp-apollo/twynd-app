@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   FlatList,
+  TextInput,
   Platform,
 } from 'react-native';
 import * as ScreenCapture from 'expo-screen-capture';
@@ -14,16 +15,14 @@ import { GAME_CONFIG, REACTIONS } from '@twynd/shared/constants';
 import { VibesScreen } from './VibesScreen';
 import { UsScreen } from './UsScreen';
 import { SettingsScreen } from './SettingsScreen';
+import { GamesGalleryScreen } from './GamesGalleryScreen';
+import { ChatSessionScreen } from './ChatSessionScreen';
+import { getChatSessions, upsertChatSession } from '../services/chatStore';
+import { getGame } from '../games/registry';
+import { getLastAnalysis } from '../services/onDeviceAI';
+import type { LocalChatSession, GameQuestion } from '@twynd/shared/types';
 
-interface ChatSession {
-  id: string;
-  title: string;
-  lastMessage?: string;
-  unreadCount: number;
-  timestamp: Date;
-}
-
-type ActiveView = 'home' | 'vibes' | 'us' | 'settings';
+type ActiveView = 'home' | 'vibes' | 'us' | 'settings' | 'games' | 'chat';
 
 interface HomeScreenProps {
   initialView?: ActiveView;
@@ -31,52 +30,98 @@ interface HomeScreenProps {
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ initialView }) => {
   const { user, setCurrentRoomId, logout } = useUser();
-  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeView, setActiveView] = useState<ActiveView>(initialView ?? 'home');
+  const [activeChatSessionId, setActiveChatSessionId] = useState<string | null>(null);
+
+  // Chat sessions loaded from local store
+  const [chatSessions, setChatSessions] = useState<LocalChatSession[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Prevent screenshots while in a room (always-on)
+  useEffect(() => {
+    ScreenCapture.preventScreenCaptureAsync();
+    return () => { ScreenCapture.allowScreenCaptureAsync(); };
+  }, []);
+
+  // Load sessions on mount and whenever returning to home
+  const loadSessions = useCallback(async () => {
+    const sessions = await getChatSessions();
+    setChatSessions(sessions);
+  }, []);
+
+  useEffect(() => {
+    if (activeView === 'home') loadSessions();
+  }, [activeView, loadSessions]);
+
+  // Filtered + sorted (getChatSessions already sorts by lastMessageAt desc)
+  const filteredSessions = searchQuery.trim()
+    ? chatSessions.filter((s) =>
+        s.title.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    : chatSessions;
+
+  // ── Navigation helpers ──────────────────────────────────────────────────────
 
   const navigateTo = (view: ActiveView) => {
     setMenuOpen(false);
     setActiveView(view);
   };
 
-  // Prevent screenshots while in a room (always active, non-toggleable)
-  useEffect(() => {
-    ScreenCapture.preventScreenCaptureAsync();
-    return () => { ScreenCapture.allowScreenCaptureAsync(); };
-  }, []);
+  const openGame = async (gameId: string) => {
+    const game = getGame(gameId);
+    if (!game) return;
 
-  const handleOpenChat = (chatSessionId: string) => {
-    // Add or surface the milestone chat session in the list
-    const exists = chatSessions.find((s) => s.id === chatSessionId);
-    if (!exists) {
-      const newSession: ChatSession = {
-        id: chatSessionId,
-        title: 'Milestone Chat',
-        unreadCount: 0,
-        timestamp: new Date(),
-      };
-      setChatSessions((prev) => [newSession, ...prev]);
-    }
-    setActiveView('home');
+    // Merge templated + AI questions
+    const base = game.getTemplatedQuestions();
+    const analysis = await getLastAnalysis();
+    const extras: GameQuestion[] = analysis?.aiQuestions?.[gameId] ?? [];
+    const questions = [...base, ...extras];
+
+    const now = new Date().toISOString();
+    const session: LocalChatSession = {
+      id: `game_${gameId}_${Date.now()}`,
+      title: game.name,
+      gameType: gameId,
+      gameState: 'my_turn',
+      gameQuestions: questions,
+      isGameCreator: true,
+      lastMessageAt: now,
+      lastMessagePreview: `🎮 ${game.name} — your turn`,
+      unreadCount: 0,
+      createdAt: now,
+    };
+    await upsertChatSession(session);
+    openChat(session.id);
   };
 
-  // Render Vibes screen when active
+  const openChat = (sessionId: string) => {
+    setActiveChatSessionId(sessionId);
+    setActiveView('chat');
+    setMenuOpen(false);
+  };
+
+  // Surface a milestone chat session (called from VibesScreen)
+  const handleOpenMilestoneChat = (chatSessionId: string) => {
+    loadSessions();
+    openChat(chatSessionId);
+  };
+
+  // ── Sub-screen renders ──────────────────────────────────────────────────────
+
   if (activeView === 'vibes') {
     return (
       <VibesScreen
         onBack={() => setActiveView('home')}
-        onOpenChat={handleOpenChat}
+        onOpenChat={handleOpenMilestoneChat}
       />
     );
   }
 
-  // Render Us screen when active
   if (activeView === 'us') {
     return <UsScreen onBack={() => setActiveView('home')} />;
   }
 
-  // Render Settings screen when active
   if (activeView === 'settings') {
     return (
       <SettingsScreen
@@ -87,62 +132,68 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ initialView }) => {
     );
   }
 
-  const handleStartGame = (gameType: string) => {
-    // Create new chat session with game
-    const newSession: ChatSession = {
-      id: `session_${Date.now()}`,
-      title: GAME_CONFIG[gameType as keyof typeof GAME_CONFIG]?.name || gameType,
-      unreadCount: 0,
-      timestamp: new Date(),
-    };
-    setChatSessions([newSession, ...chatSessions]);
-  };
+  if (activeView === 'games') {
+    return (
+      <GamesGalleryScreen
+        onSelectGame={(gameId) => { openGame(gameId); setActiveView('chat'); }}
+        onBack={() => setActiveView('home')}
+      />
+    );
+  }
 
-  const handleChatSessionPress = (session: ChatSession) => {
-    // Navigate to chat screen
-    console.log('Chat session:', session.id);
-  };
+  if (activeView === 'chat' && activeChatSessionId) {
+    return (
+      <ChatSessionScreen
+        sessionId={activeChatSessionId}
+        onBack={() => {
+          loadSessions();
+          setActiveView('home');
+        }}
+        onGameAnswered={() => {
+          loadSessions();
+          setActiveView('home');
+        }}
+      />
+    );
+  }
 
-  const renderGameItem = ({ item, index }: { item: [string, any]; index: number }) => {
-    const [gameKey, gameConfig] = item;
+  // ── Render helpers ──────────────────────────────────────────────────────────
+
+  const renderChatSession = ({ item }: { item: LocalChatSession }) => {
+    const hasUnread = item.unreadCount > 0;
+    const time = new Date(item.lastMessageAt).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
     return (
       <TouchableOpacity
-        style={styles.gameCard}
-        onPress={() => handleStartGame(gameKey)}
+        style={[styles.chatSessionItem, hasUnread && styles.chatSessionItemUnread]}
+        onPress={() => openChat(item.id)}
       >
-        <Text style={styles.gameIcon}>{gameConfig.icon}</Text>
-        <Text style={styles.gameName}>{gameConfig.name}</Text>
-        <Text style={styles.gameDescription}>{gameConfig.description}</Text>
+        <View style={styles.chatSessionInfo}>
+          <Text style={[styles.chatSessionTitle, hasUnread && styles.chatSessionTitleUnread]}>
+            {item.title}
+          </Text>
+          {item.lastMessagePreview && (
+            <Text
+              style={[styles.chatSessionMessage, hasUnread && styles.chatSessionMessageUnread]}
+              numberOfLines={1}
+            >
+              {item.lastMessagePreview}
+            </Text>
+          )}
+        </View>
+        {hasUnread && (
+          <View style={styles.unreadBadge}>
+            <Text style={styles.unreadCount}>{item.unreadCount}</Text>
+          </View>
+        )}
+        <Text style={styles.timestamp}>{time}</Text>
       </TouchableOpacity>
     );
   };
 
-  const renderChatSession = ({ item }: { item: ChatSession }) => (
-    <TouchableOpacity
-      style={styles.chatSessionItem}
-      onPress={() => handleChatSessionPress(item)}
-    >
-      <View style={styles.chatSessionInfo}>
-        <Text style={styles.chatSessionTitle}>{item.title}</Text>
-        {item.lastMessage && (
-          <Text style={styles.chatSessionMessage} numberOfLines={1}>
-            {item.lastMessage}
-          </Text>
-        )}
-      </View>
-      {item.unreadCount > 0 && (
-        <View style={styles.unreadBadge}>
-          <Text style={styles.unreadCount}>{item.unreadCount}</Text>
-        </View>
-      )}
-      <Text style={styles.timestamp}>
-        {item.timestamp.toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-        })}
-      </Text>
-    </TouchableOpacity>
-  );
+  // ── Home view ───────────────────────────────────────────────────────────────
 
   return (
     <View style={styles.container}>
@@ -154,9 +205,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ initialView }) => {
         >
           <Text style={styles.menuIcon}>☰</Text>
         </TouchableOpacity>
-
         <Text style={styles.headerTitle}>Twynd</Text>
-
         <TouchableOpacity style={styles.notificationButton}>
           <Text style={styles.notificationIcon}>🔔</Text>
         </TouchableOpacity>
@@ -164,44 +213,51 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ initialView }) => {
 
       {/* Main Content */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {chatSessions.length === 0 ? (
+
+        {/* Search — visible once there's at least 1 session */}
+        {chatSessions.length > 0 && (
+          <View style={styles.searchContainer}>
+            <Text style={styles.searchIcon}>🔍</Text>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search conversations…"
+              placeholderTextColor="#bbb"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              clearButtonMode="while-editing"
+            />
+          </View>
+        )}
+
+        {filteredSessions.length === 0 && chatSessions.length === 0 ? (
           // Empty State
           <View style={styles.emptyState}>
             <Text style={styles.emptyIcon}>💫</Text>
             <Text style={styles.emptyTitle}>Welcome, {user?.nickname}!</Text>
             <Text style={styles.emptyDescription}>
-              Start a game or conversation to deepen your connection
+              Tap New to pick a game and start a conversation
             </Text>
           </View>
         ) : (
           // Chat Sessions List
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Recent Conversations</Text>
-            <FlatList
-              data={chatSessions}
-              renderItem={renderChatSession}
-              keyExtractor={(item) => item.id}
-              scrollEnabled={false}
-            />
+            <Text style={styles.sectionTitle}>Conversations</Text>
+            {filteredSessions.length === 0 ? (
+              <Text style={styles.noResults}>No matches for "{searchQuery}"</Text>
+            ) : (
+              <FlatList
+                data={filteredSessions}
+                renderItem={renderChatSession}
+                keyExtractor={(item) => item.id}
+                scrollEnabled={false}
+              />
+            )}
           </View>
         )}
-
-        {/* Games Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Games</Text>
-          <FlatList
-            data={Object.entries(GAME_CONFIG)}
-            renderItem={renderGameItem}
-            keyExtractor={([key]) => key}
-            numColumns={2}
-            columnWrapperStyle={styles.gameGrid}
-            scrollEnabled={false}
-          />
-        </View>
       </ScrollView>
 
-      {/* New Button (Floating) */}
-      <TouchableOpacity style={styles.newButton}>
+      {/* New Button (Floating) — opens Games Gallery */}
+      <TouchableOpacity style={styles.newButton} onPress={() => navigateTo('games')}>
         <Text style={styles.newButtonText}>New</Text>
       </TouchableOpacity>
 
@@ -213,7 +269,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ initialView }) => {
             <Text style={styles.menuLogo}>Twynd</Text>
           </View>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('home')}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigateTo('games')}>
             <Text style={styles.menuItemIcon}>✨</Text>
             <Text style={styles.menuItemText}>New</Text>
           </TouchableOpacity>
@@ -244,12 +300,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ initialView }) => {
                   <TouchableOpacity
                     key={session.id}
                     style={styles.menuItem}
-                    onPress={() => handleChatSessionPress(session)}
+                    onPress={() => openChat(session.id)}
                   >
                     <Text style={styles.sessionIcon}>💬</Text>
-                    <Text style={styles.menuItemText} numberOfLines={1}>
-                      {session.title}
-                    </Text>
+                    <View style={styles.menuSessionTextGroup}>
+                      <Text style={styles.menuItemText} numberOfLines={1}>
+                        {session.title}
+                      </Text>
+                      {session.unreadCount > 0 && (
+                        <View style={styles.menuUnreadDot} />
+                      )}
+                    </View>
                   </TouchableOpacity>
                 ))}
               </>
@@ -294,87 +355,39 @@ const styles = StyleSheet.create({
     borderBottomColor: '#f0f0f0',
     paddingTop: 12,
   },
-  menuButton: {
-    padding: 8,
-  },
-  menuIcon: {
-    fontSize: 24,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000',
-  },
-  notificationButton: {
-    padding: 8,
-  },
-  notificationIcon: {
-    fontSize: 20,
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-  },
-  emptyState: {
+  menuButton: { padding: 8 },
+  menuIcon: { fontSize: 24 },
+  headerTitle: { fontSize: 20, fontWeight: '700', color: '#000' },
+  notificationButton: { padding: 8 },
+  notificationIcon: { fontSize: 20 },
+
+  scrollContent: { paddingHorizontal: 16, paddingVertical: 16 },
+
+  // Search bar
+  searchContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 60,
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: 16,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#000',
-    marginBottom: 8,
-  },
-  emptyDescription: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 12,
-    color: '#000',
-  },
-  gameCard: {
-    flex: 1,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#f5f5f5',
     borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: 12,
+    marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
-    marginHorizontal: 6,
-    marginBottom: 12,
+    borderColor: '#ebebeb',
   },
-  gameGrid: {
-    gap: 0,
-  },
-  gameIcon: {
-    fontSize: 32,
-    marginBottom: 8,
-  },
-  gameName: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#000',
-    textAlign: 'center',
-    marginBottom: 4,
-  },
-  gameDescription: {
-    fontSize: 12,
-    color: '#666',
-    textAlign: 'center',
-  },
+  searchIcon: { fontSize: 14, marginRight: 8 },
+  searchInput: { flex: 1, fontSize: 14, color: '#000', paddingVertical: 10 },
+  noResults: { fontSize: 14, color: '#aaa', textAlign: 'center', paddingVertical: 24 },
+
+  // Empty state
+  emptyState: { alignItems: 'center', justifyContent: 'center', paddingVertical: 60 },
+  emptyIcon: { fontSize: 64, marginBottom: 16 },
+  emptyTitle: { fontSize: 20, fontWeight: '600', color: '#000', marginBottom: 8 },
+  emptyDescription: { fontSize: 14, color: '#666', textAlign: 'center' },
+
+  section: { marginBottom: 32 },
+  sectionTitle: { fontSize: 18, fontWeight: '600', marginBottom: 12, color: '#000' },
+
+  // Chat session rows
   chatSessionItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -384,19 +397,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 8,
   },
-  chatSessionInfo: {
-    flex: 1,
+  chatSessionItemUnread: {
+    backgroundColor: '#FFF8EC',
+    borderLeftWidth: 3,
+    borderLeftColor: '#FF9500',
   },
-  chatSessionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000',
-    marginBottom: 4,
-  },
-  chatSessionMessage: {
-    fontSize: 14,
-    color: '#999',
-  },
+  chatSessionInfo: { flex: 1 },
+  chatSessionTitle: { fontSize: 16, fontWeight: '600', color: '#000', marginBottom: 4 },
+  chatSessionTitleUnread: { color: '#000' },
+  chatSessionMessage: { fontSize: 14, color: '#999' },
+  chatSessionMessageUnread: { color: '#555', fontWeight: '500' },
   unreadBadge: {
     backgroundColor: '#FF3B30',
     borderRadius: 12,
@@ -405,16 +415,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 8,
+    paddingHorizontal: 4,
   },
-  unreadCount: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#fff',
-  },
-  timestamp: {
-    fontSize: 12,
-    color: '#999',
-  },
+  unreadCount: { fontSize: 12, fontWeight: '600', color: '#fff' },
+  timestamp: { fontSize: 12, color: '#999' },
+
+  // New floating button
   newButton: {
     position: 'absolute',
     bottom: 24,
@@ -425,12 +431,15 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#FF9500',
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
   },
-  newButtonText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#fff',
-  },
+  newButtonText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+
+  // Menu drawer
   menuDrawer: {
     position: 'absolute',
     left: 0,
@@ -444,62 +453,28 @@ const styles = StyleSheet.create({
     zIndex: 100,
     flexDirection: 'column',
   },
-  menuScrollArea: {
-    flex: 1,
-  },
+  menuScrollArea: { flex: 1 },
   menuBottom: {
     paddingBottom: Platform.OS === 'android' ? 24 : 34,
   },
-  menuHeader: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+  menuHeader: { paddingHorizontal: 16, paddingVertical: 12 },
+  menuLogo: { fontSize: 24, fontWeight: '700', color: '#000' },
+  menuItem: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12 },
+  menuItemIcon: { fontSize: 20, marginRight: 12, width: 28 },
+  sessionIcon: { fontSize: 16, marginRight: 12, width: 28 },
+  menuItemText: { fontSize: 16, color: '#000', flex: 1 },
+  menuSessionTextGroup: { flex: 1, flexDirection: 'row', alignItems: 'center' },
+  menuUnreadDot: {
+    width: 8, height: 8, borderRadius: 4,
+    backgroundColor: '#FF9500', marginLeft: 6,
   },
-  menuLogo: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#000',
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  menuItemIcon: {
-    fontSize: 20,
-    marginRight: 12,
-    width: 28,
-  },
-  sessionIcon: {
-    fontSize: 16,
-    marginRight: 12,
-    width: 28,
-  },
-  menuItemText: {
-    fontSize: 16,
-    color: '#000',
-    flex: 1,
-  },
-  menuDivider: {
-    height: 1,
-    backgroundColor: '#f0f0f0',
-    marginVertical: 8,
-  },
+  menuDivider: { height: 1, backgroundColor: '#f0f0f0', marginVertical: 8 },
   menuSectionTitle: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#999',
-    textTransform: 'uppercase',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    fontSize: 12, fontWeight: '600', color: '#999',
+    textTransform: 'uppercase', paddingHorizontal: 16, paddingVertical: 8,
   },
   menuOverlay: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    zIndex: 99,
+    position: 'absolute', left: 0, right: 0, top: 0, bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 99,
   },
 });

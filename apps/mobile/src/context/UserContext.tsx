@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { clearAllChatData } from '../services/chatStore';
+import { clearLocalProfileData } from '../services/localProfile';
 import { UserProfile, UserSession } from '@twynd/shared/types';
 import { STORAGE_KEYS } from '@twynd/shared/constants';
 import { EXTERNAL_LINKS } from '@twynd/shared/constants';
@@ -180,11 +182,15 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setUserState(null);
       setSession(null);
       setCurrentRoomIdState(null);
-      
-      await AsyncStorage.multiRemove([
-        STORAGE_KEYS.USER_TOKEN,
-        STORAGE_KEYS.USER_DATA,
-        STORAGE_KEYS.ROOM_CODE,
+
+      await Promise.all([
+        AsyncStorage.multiRemove([
+          STORAGE_KEYS.USER_TOKEN,
+          STORAGE_KEYS.USER_DATA,
+          STORAGE_KEYS.ROOM_CODE,
+        ]),
+        clearAllChatData(),
+        clearLocalProfileData(),
       ]);
     } finally {
       setIsLoading(false);

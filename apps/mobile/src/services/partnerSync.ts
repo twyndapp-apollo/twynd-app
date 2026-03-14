@@ -15,18 +15,23 @@
  */
 
 import { EXTERNAL_LINKS } from '@twynd/shared/constants';
-import type { LocalMyProfile, LocalPartnerProfile } from '@twynd/shared/types';
+import type { LocalMyProfile, LocalPartnerProfile, LocalChatSession } from '@twynd/shared/types';
 import {
   getMyProfile,
   savePartnerProfile,
   applyPartnerUpdate,
 } from './localProfile';
+import { upsertChatSession } from './chatStore';
 
 export type SyncMessageType =
   | 'profile_sync'
   | 'status_update'
   | 'location_update'
-  | 'profile_update';
+  | 'profile_update'
+  | 'chat_message'
+  | 'game_session_invite'   // creator → partner: here is a new game session for you
+  | 'game_complete'         // partner → creator: here are my answers, compute results
+  | 'game_answer';          // kept for compatibility
 
 export interface SyncMessage {
   type: SyncMessageType;
@@ -109,6 +114,11 @@ class PartnerSyncService {
     this.ws.send(JSON.stringify({ type, payload }));
   }
 
+  /** Generic raw send — used by GameScreen and ChatSessionScreen. */
+  sendRaw(type: SyncMessageType, payload: Record<string, unknown>): void {
+    this.send(type, payload);
+  }
+
   /** Push a full snapshot of our profile to the partner (lead does this on connect). */
   async pushFullSnapshot(): Promise<void> {
     const profile = await getMyProfile();
@@ -178,6 +188,30 @@ class PartnerSyncService {
         await applyPartnerUpdate(payload as Partial<LocalPartnerProfile>);
         break;
       }
+
+      case 'game_session_invite': {
+        // Partner sent us a new game session — persist it so it appears in their session list.
+        const invite = payload as {
+          session: LocalChatSession;
+          creatorAnswers: Record<string, string>;
+        };
+        await upsertChatSession({
+          ...invite.session,
+          gameState: 'my_turn',
+          theirAnswers: invite.creatorAnswers,
+          isGameCreator: false,
+          unreadCount: 1,             // badge to draw partner's attention
+          lastMessagePreview: '🎮 Your turn to play!',
+        });
+        break;
+      }
+
+      // chat_message, game_complete, game_answer:
+      // Receiving screen handles storage via its own listener.
+      case 'chat_message':
+      case 'game_complete':
+      case 'game_answer':
+        break;
     }
 
     // Notify any registered listeners (e.g. to trigger a UI re-render)

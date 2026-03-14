@@ -317,6 +317,12 @@ export interface LocalChatSession {
   lastMessagePreview?: string;
   unreadCount: number;
   createdAt: string;          // ISO string
+  // Game state — only present when gameType is set
+  gameState?: 'my_turn' | 'waiting_partner' | 'completed';
+  gameQuestions?: GameQuestion[];            // embedded so partner gets same questions
+  myAnswers?: Record<string, string>;        // this device's answers
+  theirAnswers?: Record<string, string>;     // other party's answers (received via WS)
+  isGameCreator?: boolean;                   // true on the device that created the session
 }
 
 export interface LocalGameResult {
